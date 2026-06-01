@@ -1740,10 +1740,10 @@ body{
     <div class="build-progress">
       <div class="build-progress-label">
         <span>Current slice</span>
-        <span>P06 · S019</span>
+        <span>P06 · S022</span>
       </div>
-      <div class="progress-bar"><div class="progress-fill" style="width:6.69%"></div></div>
-      <div style="font-size:10px;color:var(--color-text-muted);margin-top:7px;line-height:1.45;">18 / 269 slices signed off · env separation next</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:7.81%"></div></div>
+      <div style="font-size:10px;color:var(--color-text-muted);margin-top:7px;line-height:1.45;">21 / 269 slices signed off · browser acceptance re-run next</div>
     </div>
   </div>
 </aside>
@@ -2447,27 +2447,28 @@ body{
     </div>
 
     <div class="card" style="border-left:3px solid var(--color-success)">
-      <div class="card-header"><div class="card-title">Right now <span class="rule-phase rp4" style="margin-left:8px;vertical-align:middle">S017–S018 signed off · MFA + audit hardening</span></div></div>
+      <div class="card-header"><div class="card-title">Right now <span class="rule-phase rp4" style="margin-left:8px;vertical-align:middle">S019–S021 signed off · env hardening + role nav</span></div></div>
       <div class="card-body">
-	        <p style="color:var(--color-text);line-height:1.7;font-size:var(--text-base)"><strong>Super-admin MFA is enforced.</strong> TOTP verification on sign-in, <code>user_mfa</code> table, JWT <code>mfaVerified</code> gate. Cross-estate super-admin queue actions require a documented access reason (min 5 chars) with <code>access.reason_logged</code> audit events.</p>
-	        <p style="color:var(--color-text-muted);line-height:1.7;margin-top:10px"><strong style="color:var(--color-text)">Proof:</strong> <code>npm run verify</code> green — <strong>286</strong> tests, <strong>20</strong> files, production build exit 0. MFA, access-reason, and audit immutability tests added.</p>
-		        <p style="color:var(--color-text-muted);line-height:1.7;margin-top:10px"><strong style="color:var(--color-text)">Enterprise readiness (honest):</strong> S001–S018 pass <em>foundation</em> enterprise (typed DB, auth lifecycle, MFA, append-only audit triggers, server permissions) but <strong>not</strong> full Hawick launch enterprise — env separation (S019), backup/restore (S020), Postgres/HA, first-claim locking, onboarding walkthrough, and compliance retention still open.</p>
-	        <p style="color:var(--color-text-muted);font-size:var(--text-xs);margin-top:12px">Count <strong>18 / 269</strong> · P06 hardening band · next <strong>P06 · S019</strong> environment separation baseline.</p>
+	        <p style="color:var(--color-text);line-height:1.7;font-size:var(--text-base)"><strong>Environment separation baseline is in place.</strong> <code>DENTALAI_APP_ENV</code> labels dev/staging/production/test; boot-time secret hygiene blocks weak <code>AUTH_SECRET</code> and <code>NEXT_PUBLIC_*</code> secret leaks; CSP + companion security headers on all routes; <code>/api/health</code> reports runtime/persistence checks without exposing secrets.</p>
+	        <p style="color:var(--color-text-muted);line-height:1.7;margin-top:10px"><strong style="color:var(--color-text)">Proof:</strong> <code>npm run verify</code> green — <strong>317</strong> tests, <strong>25</strong> files, production build exit 0. Backup/restore scripts, incident evidence pack, role Primary+More nav matrix, and route guards added.</p>
+		        <p style="color:var(--color-text-muted);line-height:1.7;margin-top:10px"><strong style="color:var(--color-text)">Enterprise readiness (honest):</strong> S001–S021 pass <em>hardening band</em> enterprise (env separation, CSP, health probe, SQLite backup evidence, four-role nav) but <strong>not</strong> full Hawick launch enterprise — Postgres/HA, first-claim locking, onboarding walkthrough, browser acceptance re-run, and compliance retention still open.</p>
+	        <p style="color:var(--color-text-muted);font-size:var(--text-xs);margin-top:12px">Count <strong>21 / 269</strong> · P06 hardening band · next <strong>P06 · S022</strong> browser acceptance re-run (ledger) / Dentally read-proof re-run gate.</p>
       </div>
     </div>
 
     <div class="section">
       <div class="section-header">What happens next</div>
       <div class="rule-list">
-	        <div class="rule-row"><div class="rule-num">Now</div><div><div class="rule-name">Environment separation + secret hygiene</div><div class="rule-desc">P06 · S019 — env separation, CSP, and monitoring baseline. Onboarding walkthrough (J-7 remainder) and first-claim queue locking stay queued.</div></div><div class="rule-phase rp3">Active</div></div>
-	        <div class="rule-row"><div class="rule-num">Next</div><div><div class="rule-name">Backup / restore evidence</div><div class="rule-desc">P06 · S020 — backup, restore, and incident-response evidence.</div></div><div class="rule-phase rp2">Queued</div></div>
-	        <div class="rule-row"><div class="rule-num">Then</div><div><div class="rule-name">Dentally read-proof re-run</div><div class="rule-desc">Token rotation evidence, clean browser proof, field mapping into queue and identity contracts.</div></div><div class="rule-phase rp2">Queued</div></div>
+	        <div class="rule-row"><div class="rule-num">Now</div><div><div class="rule-name">Browser acceptance re-run</div><div class="rule-desc">P06 · S022 — auth, clinic access, protected routes, role nav, CSP headers. First-claim queue locking and onboarding walkthrough (J-7 remainder) stay queued.</div></div><div class="rule-phase rp3">Active</div></div>
+	        <div class="rule-row"><div class="rule-num">Next</div><div><div class="rule-name">Dentally read-proof re-run</div><div class="rule-desc">P07 gate — token rotation evidence, clean browser proof, field mapping into queue and identity contracts.</div></div><div class="rule-phase rp2">Queued</div></div>
+	        <div class="rule-row"><div class="rule-num">Then</div><div><div class="rule-name">Durable schema expansion</div><div class="rule-desc">P06 · S023+ — queue/audit/users schema hardening and repository migration slices.</div></div><div class="rule-phase rp2">Queued</div></div>
       </div>
     </div>
 
     <div class="section">
       <div class="section-header">Done so far &mdash; the journal</div>
       <div class="rule-list">
+        <div class="rule-row"><div class="rule-num">1 Jun</div><div><div class="rule-name">S019–S021 signed off &mdash; env hardening, backup evidence, role nav</div><div class="rule-desc"><code>DENTALAI_APP_ENV</code> separation, secret hygiene, CSP headers, <code>/api/health</code>, SQLite backup/restore scripts, incident evidence pack, Primary+More nav per role with route guards. 317 tests green.</div></div><div class="rule-phase rp4">Done</div></div>
         <div class="rule-row"><div class="rule-num">1 Jun</div><div><div class="rule-name">S017 + S018 signed off &mdash; super-admin MFA + audit hardening</div><div class="rule-desc">TOTP MFA for super-admin, cross-estate access-reason audit, canonical taxonomy guard, SQLite triggers blocking audit UPDATE/DELETE. 286 tests green.</div></div><div class="rule-phase rp4">Done</div></div>
         <div class="rule-row"><div class="rule-num">1 Jun</div><div><div class="rule-name">S016 signed off &mdash; enterprise DB + staff account lifecycle</div><div class="rule-desc">Typed SQLite schema, migrations, append-only audit, scrypt passwords, invitations, reset, deactivation, session revocation, staff UI. 270 tests green.</div></div><div class="rule-phase rp4">Done</div></div>
         <div class="rule-row"><div class="rule-num">1 Jun</div><div><div class="rule-name">S014 + S015 &mdash; permissions + login limiter persistence</div><div class="rule-desc">Receptionists approve ordinary bookings; rules block disables approve/modify; failed login counters survive restart.</div></div><div class="rule-phase rp4">Done</div></div>
@@ -2508,8 +2509,8 @@ body{
 	    <div class="section">
 	      <div class="section-header">Exact Active Slice</div>
 	      <div class="rule-list">
-		        <div class="rule-row"><div class="rule-num">Done</div><div><div class="rule-name">S001-S018 signed off</div><div class="rule-desc">Foundation through P06 hardening: persistence, permissions, enterprise DB, staff lifecycle, super-admin MFA, access-reason audit, append-only audit triggers.</div></div><div class="rule-phase rp4">18 / 269</div></div>
-		        <div class="rule-row"><div class="rule-num">Now</div><div><div class="rule-name">P06 · S019 — Environment separation baseline</div><div class="rule-desc">Env separation, secret hygiene, CSP, monitoring baseline. First-claim queue locking and onboarding walkthrough (J-7 remainder) remain queued.</div></div><div class="rule-phase rp3">Active</div></div>
+		        <div class="rule-row"><div class="rule-num">Done</div><div><div class="rule-name">S001-S021 signed off</div><div class="rule-desc">Foundation through P06 hardening: persistence, permissions, enterprise DB, staff lifecycle, MFA, audit immutability, env separation, backup evidence, role navigation.</div></div><div class="rule-phase rp4">21 / 269</div></div>
+		        <div class="rule-row"><div class="rule-num">Now</div><div><div class="rule-name">P06 · S022 — Browser acceptance re-run</div><div class="rule-desc">Auth, clinic access, protected routes, role nav, CSP. First-claim queue locking and onboarding walkthrough (J-7 remainder) remain queued.</div></div><div class="rule-phase rp3">Active</div></div>
 	      </div>
 	    </div>
 
@@ -4030,7 +4031,7 @@ body{
     </div>
 
     <div class="kpi-grid">
-	      <div class="kpi-card"><div class="kpi-label">Current Slice</div><div class="kpi-value">P06 · S019</div><div class="kpi-delta warn">Env separation · 18 / 269 slices signed off</div></div>
+	      <div class="kpi-card"><div class="kpi-label">Current Slice</div><div class="kpi-value">P06 · S022</div><div class="kpi-delta warn">Browser acceptance · 21 / 269 slices signed off</div></div>
       <div class="kpi-card"><div class="kpi-label">Dentally</div><div class="kpi-value">Read</div><div class="kpi-delta pos">Read-only proof evidence exists</div></div>
       <div class="kpi-card"><div class="kpi-label">Voice / Phone</div><div class="kpi-value">Later</div><div class="kpi-delta">ElevenLabs later · CallSwitch at live pilot</div></div>
       <div class="kpi-card"><div class="kpi-label">Read Proof</div><div class="kpi-value">Evidence</div><div class="kpi-delta warn">Re-run and formal sign-off still required</div></div>
@@ -4056,6 +4057,54 @@ body{
 			      <div class="techlog-entry active">
 			        <div class="techlog-header">
 			          <div class="techlog-num active">2026-06-01 &middot; late BST</div>
+			          <div class="techlog-title">S021 Signed Off &mdash; Role Navigation Matrix</div>
+			          <div class="techlog-meta">P06 &middot; S021 &middot; 21 / 269 &middot; 317 / 317 tests green &middot; commit PLACEHOLDER_S021</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">What was built</div>
+			          <div class="techlog-body"><code>lib/navigation/menus.ts</code> Primary four (Today, Queue, Identity, Rules) + More drawer for managers (Staff, Integrations, Audit). <code>lib/navigation/access.ts</code> route guards; <code>proxy.ts</code> middleware enforcement; <code>requireRouteAccess</code> on staff/integrations/audit pages; AppShell mobile bottom nav. Eleven navigation tests.</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">Next slice</div>
+			          <div class="techlog-body"><strong>P06 &middot; S022</strong> &mdash; browser acceptance re-run for auth, clinic access, protected routes, and role nav.</div>
+			        </div>
+			      </div>
+
+			      <div class="techlog-entry active">
+			        <div class="techlog-header">
+			          <div class="techlog-num active">2026-06-01 &middot; late BST</div>
+			          <div class="techlog-title">S020 Signed Off &mdash; Backup / Restore Evidence</div>
+			          <div class="techlog-meta">P06 &middot; S020 &middot; 20 / 269 &middot; 301 / 301 tests green &middot; commit PLACEHOLDER_S020</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">What was built</div>
+			          <div class="techlog-body"><code>lib/ops/backup.ts</code> async SQLite online backup + restore with pre-restore snapshot; <code>lib/ops/incident.ts</code> evidence pack; <code>scripts/db-backup.mjs</code>, <code>db-restore.mjs</code>, <code>incident-evidence.mjs</code>; <code>npm run db:backup</code> / <code>db:restore</code> / <code>incident:evidence</code>. Four backup/incident tests.</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">Next slice</div>
+			          <div class="techlog-body"><strong>P06 &middot; S021</strong> &mdash; role navigation matrix (Primary + More, route guards).</div>
+			        </div>
+			      </div>
+
+			      <div class="techlog-entry active">
+			        <div class="techlog-header">
+			          <div class="techlog-num active">2026-06-01 &middot; late BST</div>
+			          <div class="techlog-title">S019 Signed Off &mdash; Environment Separation Baseline</div>
+			          <div class="techlog-meta">P06 &middot; S019 &middot; 19 / 269 &middot; 299 / 299 tests green &middot; commit PLACEHOLDER_S019</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">What was built</div>
+			          <div class="techlog-body"><code>DENTALAI_APP_ENV</code> separation (<code>lib/env/runtime.ts</code>), boot-time secret hygiene (<code>lib/env/secrets.ts</code>, <code>lib/env.ts</code>), CSP + hardening headers (<code>lib/security/headers.ts</code>, <code>next.config.ts</code>), monitoring <code>GET /api/health</code> with no secret leakage. Ten app-env + three security-header + three health tests.</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">Next slice</div>
+			          <div class="techlog-body"><strong>P06 &middot; S020</strong> &mdash; backup, restore, and incident-response evidence.</div>
+			        </div>
+			      </div>
+
+			      <div class="techlog-entry">
+			        <div class="techlog-header">
+			          <div class="techlog-num">2026-06-01 &middot; late BST</div>
 			          <div class="techlog-title">S017 + S018 Signed Off &mdash; Super-Admin MFA + Audit Hardening</div>
 			          <div class="techlog-meta">P06 hardening band &middot; 18 / 269 &middot; 286 / 286 tests green &middot; verify exit 0</div>
 			        </div>
@@ -4069,7 +4118,7 @@ body{
 			        </div>
 			        <div class="techlog-section">
 			          <div class="techlog-section-label">Next slice</div>
-			          <div class="techlog-body"><strong>P06 &middot; S019</strong> &mdash; environment separation, secret hygiene, CSP, and monitoring baseline.</div>
+			          <div class="techlog-body"><strong>P06 &middot; S019</strong> &mdash; environment separation, secret hygiene, CSP, and monitoring baseline. <em>Signed off same session.</em></div>
 			        </div>
 			      </div>
 

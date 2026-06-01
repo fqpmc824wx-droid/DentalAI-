@@ -2,7 +2,7 @@
 
 AI-powered reception operations for UK dental practices. AI prepares work. Humans approve diary-changing actions. Dentally confirms successful appointments.
 
-> **Current status:** foundation scaffold with enterprise typed SQLite, staff lifecycle (S016), super-admin MFA, and audit hardening (S017–S018). Active roadmap in `../dentalai-planning-redesign.html`. **18 / 269** slices signed off. Not pilot-ready yet — queue OS, telephony, slot holds, and Dentally writes remain ahead.
+> **Current status:** foundation scaffold with enterprise typed SQLite, staff lifecycle (S016), super-admin MFA, audit hardening (S017–S018), env separation/CSP/health (S019), backup evidence (S020), and role navigation (S021). Active roadmap in `../dentalai-planning-redesign.html`. **21 / 269** slices signed off. Not pilot-ready yet — queue OS, telephony, slot holds, and Dentally writes remain ahead.
 
 ## Current Truth
 
@@ -10,6 +10,9 @@ The codebase contains useful evidence, not a finished operating system:
 
 - A Next.js 16 app with Auth.js credentials login, **scrypt-hashed passwords**, staff invitations, password reset, deactivation, and session revocation.
 - **Enterprise SQLite storage**: typed tables (`queue_items`, `audit_events`, `users`, …), versioned migrations, append-only audit (no 500 cap), row-level login rate limits.
+- **Environment hardening (S019)**: `DENTALAI_APP_ENV` separation, boot-time secret hygiene, CSP + security headers, `/api/health` monitoring probe (no secrets exposed).
+- **Backup evidence (S020)**: SQLite backup/restore scripts with manifest JSON and incident-response evidence pack.
+- **Role navigation (S021)**: Primary + More menus per four-role matrix; route guards on manager-only surfaces.
 - Protected routes, clinic scoping, queue actions, audit events, caller-identity scenarios, and a deterministic rules prototype.
 - A server-only GET-only Dentally client with safe-path validation, typed parsers, readiness reporting, clinic-to-site mapping, audited reads, and structural token-leak tests.
 
@@ -17,10 +20,10 @@ The expanded Sessions 1-5 operating system is not implemented yet: full queue ta
 
 ## Known Re-Audit Findings
 
-- `npm run verify` passes: typecheck, lint, **286** Vitest tests across **20** files, and production build.
+- `npm run verify` passes: typecheck, lint, **317** Vitest tests across **25** files, and production build.
 - Demo seed accounts still use password **`demo`** (now stored as scrypt hashes in SQLite when persistence is on).
 - First-claim queue locking and critical manager notifications remain future queue OS work.
-- Multi-instance HA, Postgres, backup/restore evidence, and formal compliance retention hooks are not yet implemented.
+- Multi-instance HA, Postgres, and formal compliance retention hooks are not yet implemented.
 
 ## Locked Product Rule
 
@@ -61,7 +64,12 @@ npm run lint
 npm run test
 npm run build
 npm run verify
+npm run db:backup          # backup .data/dentalai.db → .data/backups/
+npm run db:restore -- --from .data/backups/dentalai-<timestamp>.db
+npm run incident:evidence  # emit incident-response JSON (no secrets)
 ```
+
+Health probe (when running): [http://localhost:3000/api/health](http://localhost:3000/api/health)
 
 ## Architecture Snapshot
 
@@ -75,6 +83,7 @@ npm run verify
 | Tests | Vitest |
 | Persistence | Typed SQLite (WAL, migrations, repositories) |
 | Dentally | Server-only GET-only read proof |
+| Ops | Env separation, CSP, health probe, backup scripts |
 
 ## Security Boundary
 
@@ -83,6 +92,7 @@ npm run verify
 - Staff lifecycle: invitations (72h), reset links (30m), deactivation revokes sessions and releases locks.
 - Dentally client exports GET-only reads and rejects unsafe paths.
 - Audit log is append-only in typed storage.
+- CSP and companion headers on all routes; secrets never use `NEXT_PUBLIC_` prefix.
 
 ## Planning Source of Truth
 

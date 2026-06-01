@@ -1,4 +1,4 @@
-import { requireSession } from '@/lib/access'
+import { requireRouteAccess } from '@/lib/access'
 import { getDentallyReadinessReport, type DentallyReadinessStatus } from '@/lib/dentally/readiness'
 import {
   Banner,
@@ -29,7 +29,7 @@ function formatDuration(ms: number) {
 }
 
 export default async function IntegrationsPage() {
-  const actor = await requireSession()
+  const actor = await requireRouteAccess('/integrations')
   const canSeeSetup = actor.role === 'practice_manager' || actor.role === 'group_owner' || actor.role === 'super_admin'
 
   if (!canSeeSetup) {

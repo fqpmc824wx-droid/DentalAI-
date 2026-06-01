@@ -1,14 +1,12 @@
-import { requireSession } from '@/lib/access'
-import { canManageRole, canManageStaff } from '@/lib/users/permissions'
+import { requireRouteAccess } from '@/lib/access'
+import { canManageRole } from '@/lib/users/permissions'
 import { listStaffForActor } from '@/lib/users/actions'
 import { StaffInviteForm, StaffList } from '@/components/StaffManagement'
 import { PageShell, PageHeader, Banner, PageFoot } from '@/components/calm'
-import { redirect } from 'next/navigation'
 import type { Role } from '@/types'
 
 export default async function StaffPage() {
-  const actor = await requireSession()
-  if (!canManageStaff(actor)) redirect('/dashboard')
+  const actor = await requireRouteAccess('/staff')
 
   const users = await listStaffForActor()
   const allowedRoles: Role[] = (['receptionist', 'practice_manager', 'group_owner', 'super_admin'] as Role[])

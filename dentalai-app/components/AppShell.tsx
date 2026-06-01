@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { logoutAction } from '@/lib/auth-actions'
+import { navigationForRole } from '@/lib/navigation/menus'
 import type { Clinic, Role } from '@/types'
 import { ROLE_LABELS } from '@/lib/constants'
 
@@ -15,25 +16,6 @@ type User = {
   clinicId: string
   clinicIds: string[]
 }
-
-const WORK_NAV = [
-  { href: '/dashboard', label: 'Today' },
-  { href: '/queue',     label: 'Queue', showCount: true },
-]
-
-const RECEPTION_NAV = [
-  { href: '/identity', label: 'Identity' },
-  { href: '/rules',    label: 'Rules' },
-]
-
-const TRUST_NAV = [
-  { href: '/integrations', label: 'Integrations' },
-  { href: '/audit', label: 'Audit' },
-]
-
-const ADMIN_NAV = [
-  { href: '/staff', label: 'Staff' },
-]
 
 function initials(name: string) {
   return name.split(/\s+/).map(p => p[0]).join('').slice(0, 2).toUpperCase()
@@ -72,7 +54,7 @@ export default function AppShell({
   const [drawerOpen, setDrawerOpen] = useState(false)
   const isMulti = user.clinicIds.length > 1
   const clinicLabel = isMulti ? `${user.clinicIds.length} clinics` : (clinic?.name ?? '—')
-  const showStaffNav = user.role === 'practice_manager' || user.role === 'group_owner' || user.role === 'super_admin'
+  const { primary, more } = navigationForRole(user.role)
 
   // Lock body scroll when drawer is open
   useEffect(() => {
@@ -85,7 +67,11 @@ export default function AppShell({
 
   const closeDrawer = () => setDrawerOpen(false)
 
-  function renderNavGroup(label: string, items: { href: string; label: string; showCount?: boolean }[]) {
+  function renderNavGroup(
+    label: string,
+    items: { href: string; label: string; showCount?: boolean }[],
+  ) {
+    if (items.length === 0) return null
     return (
       <div className="side-section">
         <div className="head">{label}</div>
@@ -121,6 +107,36 @@ export default function AppShell({
     )
   }
 
+  function renderSidebar(className: string, options?: { hidden?: boolean }) {
+    return (
+      <aside
+        className={className}
+        aria-label="Navigation"
+        aria-hidden={options?.hidden}
+      >
+        {options?.hidden === false && (
+          <button
+            className="close"
+            onClick={() => setDrawerOpen(false)}
+            aria-label="Close navigation"
+          >
+            <IconClose />
+          </button>
+        )}
+        <div className="brand-row">
+          <div className="logo" aria-hidden />
+          <div className="name">DentalAI</div>
+        </div>
+        {renderNavGroup('Primary', primary)}
+        {renderNavGroup('More', more)}
+        {renderIdentityFoot()}
+        <form action={logoutAction}>
+          <button type="submit" className="signout">Sign out →</button>
+        </form>
+      </aside>
+    )
+  }
+
   return (
     <div className="app">
       {/* Mobile top bar — only visible <860px */}
@@ -145,47 +161,40 @@ export default function AppShell({
         onClick={() => setDrawerOpen(false)}
         aria-hidden
       />
-      <aside
-        className={`cm-drawer${drawerOpen ? ' open' : ''}`}
-        aria-label="Navigation"
-        aria-hidden={!drawerOpen}
-      >
-        <button
-          className="close"
-          onClick={() => setDrawerOpen(false)}
-          aria-label="Close navigation"
-        >
-          <IconClose />
-        </button>
-        <div className="brand-row">
-          <div className="logo" aria-hidden />
-          <div className="name">DentalAI</div>
-        </div>
-        {renderNavGroup('Work', WORK_NAV)}
-        {renderNavGroup('Reception', RECEPTION_NAV)}
-        {showStaffNav && renderNavGroup('Admin', ADMIN_NAV)}
-        {renderNavGroup('Trust', TRUST_NAV)}
-        {renderIdentityFoot()}
-        <form action={logoutAction}>
-          <button type="submit" className="signout">Sign out →</button>
-        </form>
-      </aside>
+      {renderSidebar(`cm-drawer${drawerOpen ? ' open' : ''}`, { hidden: !drawerOpen })}
 
       {/* Desktop sidebar — only visible ≥860px */}
-      <aside className="side desktop-only" aria-label="Navigation">
-        <div className="brand-row">
-          <div className="logo" aria-hidden />
-          <div className="name">DentalAI</div>
-        </div>
-        {renderNavGroup('Work', WORK_NAV)}
-        {renderNavGroup('Reception', RECEPTION_NAV)}
-        {showStaffNav && renderNavGroup('Admin', ADMIN_NAV)}
-        {renderNavGroup('Trust', TRUST_NAV)}
-        {renderIdentityFoot()}
-        <form action={logoutAction}>
-          <button type="submit" className="signout">Sign out →</button>
-        </form>
-      </aside>
+      {renderSidebar('side desktop-only')}
+
+      <nav className="cm-mobile-nav" aria-label="Primary navigation">
+        {primary.map(item => {
+          const active = pathname === item.href || pathname.startsWith(`${item.href}/`)
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`cm-mobile-nav-item${active ? ' on' : ''}`}
+            >
+              <span className="icon" aria-hidden>•</span>
+              <span>{item.label}</span>
+              {item.showCount && queuePending > 0 && (
+                <span className={`badge ${queueUrgent > 0 ? 'urgent' : ''}`}>{queuePending}</span>
+              )}
+            </Link>
+          )
+        })}
+        {more.length > 0 && (
+          <button
+            type="button"
+            className={`cm-mobile-nav-item more${drawerOpen ? ' on' : ''}`}
+            onClick={() => setDrawerOpen(true)}
+            aria-label="More navigation"
+          >
+            <span className="icon" aria-hidden>⋯</span>
+            <span>More</span>
+          </button>
+        )}
+      </nav>
 
       <main>
         {children}

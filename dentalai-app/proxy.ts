@@ -1,19 +1,28 @@
 import { auth } from '@/lib/auth'
 import { NextResponse } from 'next/server'
+import type { Role } from '@/types'
+import { canAccessRoute, deniedRouteRedirect } from '@/lib/navigation/access'
 
 export default auth((req) => {
   const { nextUrl, auth: session } = req
   const isLoggedIn = !!session?.user
 
   const isAuthRoute = nextUrl.pathname.startsWith('/login')
-  const isApiRoute = nextUrl.pathname.startsWith('/api/auth')
+  const isPublicApi =
+    nextUrl.pathname.startsWith('/api/auth') ||
+    nextUrl.pathname === '/api/health'
 
-  if (isApiRoute) return NextResponse.next()
+  if (isPublicApi) return NextResponse.next()
   if (isAuthRoute) {
     if (isLoggedIn) return NextResponse.redirect(new URL('/dashboard', nextUrl))
     return NextResponse.next()
   }
   if (!isLoggedIn) return NextResponse.redirect(new URL('/login', nextUrl))
+
+  const role = session?.user?.role as Role | undefined
+  if (role && !canAccessRoute(role, nextUrl.pathname)) {
+    return NextResponse.redirect(new URL(deniedRouteRedirect(), nextUrl))
+  }
 
   return NextResponse.next()
 })

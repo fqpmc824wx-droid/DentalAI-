@@ -11,17 +11,27 @@
  *   DENTALLY_API_TOKEN     — optional; absence means Dentally health = not_configured
  *   DENTALLY_TIMEOUT_MS    — optional, default 8000
  *
+ * Deployment (S019):
+ *   DENTALAI_APP_ENV       — development | staging | production (optional; derived)
+ *   DENTALAI_DATA_DIR      — pin SQLite directory for staging/production
+ *
  * The token is read server-side ONLY (see lib/dentally/env.ts which uses
  * `import 'server-only'`). It is never assembled into URLs, never logged,
  * and never sent to a Client Component.
  */
+
+import { readRuntimeConfig } from '@/lib/env/runtime'
+import { findPublicSecretLeaks, validateAuthSecretStrength } from '@/lib/env/secrets'
 
 function hasOneOf(...keys: string[]): boolean {
   return keys.some(k => !!process.env[k])
 }
 
 function validateEnv() {
+  const runtime = readRuntimeConfig()
   const missing: string[] = []
+  const hygiene: string[] = []
+
   if (!hasOneOf('AUTH_SECRET', 'NEXTAUTH_SECRET')) {
     missing.push('AUTH_SECRET (or NEXTAUTH_SECRET)')
   }
@@ -31,11 +41,22 @@ function validateEnv() {
     missing.push('DENTALLY_API_BASE_URL (required when DENTALLY_API_TOKEN is set)')
   }
 
-  if (missing.length > 0) {
+  hygiene.push(...validateAuthSecretStrength(runtime.requireStrongAuthSecret))
+  hygiene.push(...findPublicSecretLeaks().map(key => `${key} must not expose server secrets to the browser`))
+
+  if (runtime.appEnv === 'production' && process.env.AUTH_TRUST_HOST === 'true') {
+    console.warn(
+      '[dentalai/env] AUTH_TRUST_HOST=true in production — restrict trusted hosts at the edge when deployed.',
+    )
+  }
+
+  const problems = [...missing, ...hygiene]
+  if (problems.length > 0) {
     throw new Error(
-      `Missing required environment variables: ${missing.join(', ')}\n` +
-      `Copy .env.example to .env.local and fill in the values.\n` +
-      `Generate a secret with: openssl rand -base64 32`
+      `Environment validation failed:\n` +
+      problems.map(p => `  - ${p}`).join('\n') +
+      `\nCopy .env.example to .env.local and fill in the values.\n` +
+      `Generate a secret with: openssl rand -base64 32`,
     )
   }
 }
@@ -44,3 +65,6 @@ function validateEnv() {
 if (typeof window === 'undefined') {
   validateEnv()
 }
+
+export { readRuntimeConfig, readAppEnv } from '@/lib/env/runtime'
+export type { AppEnv, RuntimeConfig } from '@/lib/env/runtime'

@@ -48,3 +48,15 @@ export async function requireSession() {
   }
   return actor
 }
+
+/**
+ * Session + role route guard. Redirects to /dashboard when the role cannot access the route.
+ */
+export async function requireRouteAccess(pathname: string) {
+  const { canAccessRoute } = await import('@/lib/navigation/access')
+  const actor = await requireSession()
+  if (!canAccessRoute(actor.role, pathname)) {
+    redirect('/dashboard')
+  }
+  return actor
+}

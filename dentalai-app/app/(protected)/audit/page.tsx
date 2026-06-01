@@ -1,4 +1,6 @@
 import { requireSession } from '@/lib/access'
+import { canAccessRoute } from '@/lib/navigation/access'
+import { redirect } from 'next/navigation'
 import { getAuditEvents } from '@/lib/audit/store'
 import type { AuditStatus } from '@/lib/audit/types'
 import {
@@ -28,6 +30,7 @@ const STATUS_INTENT: Record<AuditStatus, PillIntent> = {
 
 export default async function AuditPage() {
   const actor = await requireSession()
+  if (!canAccessRoute(actor.role, '/audit')) redirect('/dashboard')
   const events = getAuditEvents({ clinicIds: actor.clinicIds, limit: 100 })
   const isMulti = actor.clinicIds.length > 1
 

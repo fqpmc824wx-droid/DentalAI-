@@ -1567,12 +1567,61 @@ button {
 .cm-page-foot a:hover { color: var(--ink); }
 
 /* ─── Mobile responsive adjustments for component system ──────────────── */
+.cm-mobile-nav {
+  display: none;
+}
+
 @media (max-width: 860px) {
   .app { grid-template-columns: 1fr; }
   /* Hide the desktop sidebar at mobile widths */
   .side.desktop-only { display: none; }
   .cm-topbar { display: flex; }
   .cm-page { padding: 24px 20px 110px; }
+
+  .cm-mobile-nav {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 40;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
+    gap: 4px;
+    justify-content: space-around;
+  }
+
+  .cm-mobile-nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 4px;
+    border-radius: var(--radius-md);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--muted);
+    min-width: 0;
+  }
+
+  .cm-mobile-nav-item.on {
+    color: var(--teal);
+    background: var(--surface-2);
+  }
+
+  .cm-mobile-nav-item .badge {
+    font-size: 9px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: var(--teal);
+    color: white;
+  }
+
+  .cm-mobile-nav-item .badge.urgent {
+    background: var(--red);
+  }
 }
 
 @media (max-width: 640px) {
