@@ -4057,48 +4057,28 @@ body{
 			      <div class="techlog-entry active">
 			        <div class="techlog-header">
 			          <div class="techlog-num active">2026-06-01 &middot; late BST</div>
-			          <div class="techlog-title">S021 Signed Off &mdash; Role Navigation Matrix</div>
-			          <div class="techlog-meta">P06 &middot; S021 &middot; 21 / 269 &middot; 317 / 317 tests green &middot; commit 5785f74</div>
+			          <div class="techlog-title">S019&ndash;S021 Signed Off &mdash; Env Hardening, Backup Evidence, Role Nav</div>
+			          <div class="techlog-meta">P06 hardening band &middot; 21 / 269 &middot; 317 / 317 tests green &middot; verify exit 0 &middot; commit 5785f74</div>
 			        </div>
 			        <div class="techlog-section">
-			          <div class="techlog-section-label">What was built</div>
-			          <div class="techlog-body"><code>lib/navigation/menus.ts</code> Primary four (Today, Queue, Identity, Rules) + More drawer for managers (Staff, Integrations, Audit). <code>lib/navigation/access.ts</code> route guards; <code>proxy.ts</code> middleware enforcement; <code>requireRouteAccess</code> on staff/integrations/audit pages; AppShell mobile bottom nav. Eleven navigation tests.</div>
+			          <div class="techlog-section-label">S019 &mdash; environment separation baseline</div>
+			          <div class="techlog-body"><code>DENTALAI_APP_ENV</code> separation (<code>lib/env/runtime.ts</code>), boot-time secret hygiene (<code>lib/env/secrets.ts</code>, <code>lib/env.ts</code>), CSP + hardening headers (<code>lib/security/headers.ts</code>, <code>next.config.ts</code>, <code>proxy.ts</code>), monitoring <code>GET /api/health</code> with no secret leakage.</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">S020 &mdash; backup / restore evidence</div>
+			          <div class="techlog-body"><code>lib/ops/backup.ts</code> async SQLite online backup + restore with pre-restore snapshot; <code>lib/ops/incident.ts</code> evidence pack; <code>scripts/db-backup.mjs</code>, <code>db-restore.mjs</code>, <code>incident-evidence.mjs</code>; <code>npm run db:backup</code> / <code>db:restore</code> / <code>incident:evidence</code>.</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">S021 &mdash; role navigation matrix</div>
+			          <div class="techlog-body"><code>lib/navigation/menus.ts</code> Primary four + More drawer per role; <code>lib/navigation/access.ts</code> route guards; middleware in <code>proxy.ts</code>; manager-only audit/staff/integrations hidden from receptionists; AppShell mobile bottom nav.</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">Cleanup note</div>
+			          <div class="techlog-body">Duplicate background agent run on S019 was stopped; bad commit <code>95112a0</code> never reached <code>origin/main</code>. Single source commit <code>5785f74</code> retained.</div>
 			        </div>
 			        <div class="techlog-section">
 			          <div class="techlog-section-label">Next slice</div>
 			          <div class="techlog-body"><strong>P06 &middot; S022</strong> &mdash; browser acceptance re-run for auth, clinic access, protected routes, and role nav.</div>
-			        </div>
-			      </div>
-
-			      <div class="techlog-entry active">
-			        <div class="techlog-header">
-			          <div class="techlog-num active">2026-06-01 &middot; late BST</div>
-			          <div class="techlog-title">S020 Signed Off &mdash; Backup / Restore Evidence</div>
-			          <div class="techlog-meta">P06 &middot; S020 &middot; 20 / 269 &middot; 301 / 301 tests green &middot; commit 5785f74</div>
-			        </div>
-			        <div class="techlog-section">
-			          <div class="techlog-section-label">What was built</div>
-			          <div class="techlog-body"><code>lib/ops/backup.ts</code> async SQLite online backup + restore with pre-restore snapshot; <code>lib/ops/incident.ts</code> evidence pack; <code>scripts/db-backup.mjs</code>, <code>db-restore.mjs</code>, <code>incident-evidence.mjs</code>; <code>npm run db:backup</code> / <code>db:restore</code> / <code>incident:evidence</code>. Four backup/incident tests.</div>
-			        </div>
-			        <div class="techlog-section">
-			          <div class="techlog-section-label">Next slice</div>
-			          <div class="techlog-body"><strong>P06 &middot; S021</strong> &mdash; role navigation matrix (Primary + More, route guards).</div>
-			        </div>
-			      </div>
-
-			      <div class="techlog-entry active">
-			        <div class="techlog-header">
-			          <div class="techlog-num active">2026-06-01 &middot; late BST</div>
-			          <div class="techlog-title">S019 Signed Off &mdash; Environment Separation Baseline</div>
-			          <div class="techlog-meta">P06 &middot; S019 &middot; 19 / 269 &middot; 299 / 299 tests green &middot; commit 5785f74</div>
-			        </div>
-			        <div class="techlog-section">
-			          <div class="techlog-section-label">What was built</div>
-			          <div class="techlog-body"><code>DENTALAI_APP_ENV</code> separation (<code>lib/env/runtime.ts</code>), boot-time secret hygiene (<code>lib/env/secrets.ts</code>, <code>lib/env.ts</code>), CSP + hardening headers (<code>lib/security/headers.ts</code>, <code>next.config.ts</code>), monitoring <code>GET /api/health</code> with no secret leakage. Ten app-env + three security-header + three health tests.</div>
-			        </div>
-			        <div class="techlog-section">
-			          <div class="techlog-section-label">Next slice</div>
-			          <div class="techlog-body"><strong>P06 &middot; S020</strong> &mdash; backup, restore, and incident-response evidence.</div>
 			        </div>
 			      </div>
 
