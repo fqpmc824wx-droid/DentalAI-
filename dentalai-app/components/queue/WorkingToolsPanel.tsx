@@ -12,6 +12,7 @@ import {
   recordCallbackAttempt,
   saveQueueWorkingNotes,
 } from '@/lib/queue/actions'
+import { evaluateCloseEligibility } from '@/lib/queue/close-rule'
 import { SectionCard, Banner } from '@/components/calm'
 
 function formatLockExpiry(iso?: string): string | null {
@@ -81,15 +82,25 @@ export default function WorkingToolsPanel({
     run(() => releaseQueueItem(item.id))
   }
 
+  const closeCheck = evaluateCloseEligibility(item, { outcome, notes })
+
   function handlePatientCalledBack() {
-    if (panel.requiredOutcome && !outcome) {
-      setActionError('Select an outcome before marking the patient as called back')
+    if (!closeCheck.canClose) {
+      setActionError(closeCheck.errors[0] ?? 'Complete outcome and notes before closing')
       return
     }
     run(() => recordCallbackAttempt(item.id, 'reached', notes || undefined))
   }
 
   function handleCallbackUnable() {
+    const unableCheck = evaluateCloseEligibility(item, {
+      outcome: 'no_answer',
+      notes: notes.trim().length >= closeCheck.minNotesLength ? notes : '',
+    })
+    if (panel.requiredOutcome && !unableCheck.canClose && notes.trim().length < closeCheck.minNotesLength) {
+      setActionError(`Add notes (minimum ${closeCheck.minNotesLength} characters) before logging unable to reach`)
+      return
+    }
     run(() => recordCallbackAttempt(item.id, 'unable_to_reach', notes || undefined))
   }
 
@@ -175,9 +186,9 @@ export default function WorkingToolsPanel({
           </div>
           {panel.lockState === 'unlocked' && (
             <>
-              <p style={{ fontSize: 13, color: 'var(--muted)', margin: '0 0 8px' }}>Unclaimed — anyone can pick this up.</p>
+              <p style={{ fontSize: 13, color: 'var(--muted)', margin: '0 0 8px' }}>Unclaimed — use Ownership above or claim here.</p>
               <button type="button" onClick={handleClaim} disabled={isPending} className="btn">
-                Claim item
+                I&apos;ll handle this
               </button>
             </>
           )}
@@ -234,13 +245,25 @@ export default function WorkingToolsPanel({
 
         {panel.showPatientCalledBack && (
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-            <button type="button" onClick={handlePatientCalledBack} disabled={isPending} className="btn primary">
+            <button
+              type="button"
+              onClick={handlePatientCalledBack}
+              disabled={isPending || !closeCheck.canClose}
+              className="btn primary"
+              title={closeCheck.canClose ? undefined : closeCheck.errors.join(' · ')}
+            >
               Patient called back
             </button>
             <button type="button" onClick={handleCallbackUnable} disabled={isPending} className="btn">
               Unable to reach
             </button>
           </div>
+        )}
+
+        {panel.requiredOutcome && !closeCheck.canClose && !closeCheck.immutable && (
+          <p style={{ fontSize: 12, color: 'var(--muted)', margin: 0 }}>
+            Close actions unlock once you select an outcome{closeCheck.requiresNotes ? ' and add required notes' : ''}.
+          </p>
         )}
 
         {actionError && <Banner tone="warn">⚠ {actionError}</Banner>}

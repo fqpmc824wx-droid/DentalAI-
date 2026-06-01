@@ -23,6 +23,11 @@ type QueueRow = {
   resolved_by: string | null
   notes: string | null
   source: string
+  lock_mode: string | null
+  lock_assigned_at: string | null
+  lock_last_activity_at: string | null
+  lock_session_ended_at: string | null
+  draft_notes: string | null
 }
 
 function rowToItem(row: QueueRow): QueueItem {
@@ -48,6 +53,11 @@ function rowToItem(row: QueueRow): QueueItem {
     resolvedBy: row.resolved_by ?? undefined,
     notes: row.notes ?? undefined,
     source: row.source as QueueItem['source'],
+    lockMode: (row.lock_mode ?? undefined) as QueueItem['lockMode'],
+    lockAssignedAt: row.lock_assigned_at ?? undefined,
+    lockLastActivityAt: row.lock_last_activity_at ?? undefined,
+    lockSessionEndedAt: row.lock_session_ended_at ?? undefined,
+    draftNotes: row.draft_notes ?? undefined,
   }
 }
 
@@ -74,6 +84,11 @@ function itemToParams(item: QueueItem) {
     resolvedBy: item.resolvedBy ?? null,
     notes: item.notes ?? null,
     source: item.source,
+    lockMode: item.lockMode ?? null,
+    lockAssignedAt: item.lockAssignedAt ?? null,
+    lockLastActivityAt: item.lockLastActivityAt ?? null,
+    lockSessionEndedAt: item.lockSessionEndedAt ?? null,
+    draftNotes: item.draftNotes ?? null,
   }
 }
 
@@ -88,11 +103,13 @@ const UPSERT = `
   INSERT INTO queue_items (
     id, type, priority, status, clinic_id, created_at, resolved_at, updated_at,
     caller_phone, caller_state, patient_id, title, summary, appointment_type_id,
-    confidence, rule_decision, rule_reasons, assigned_to, resolved_by, notes, source
+    confidence, rule_decision, rule_reasons, assigned_to, resolved_by, notes, source,
+    lock_mode, lock_assigned_at, lock_last_activity_at, lock_session_ended_at, draft_notes
   ) VALUES (
     @id, @type, @priority, @status, @clinicId, @createdAt, @resolvedAt, @updatedAt,
     @callerPhone, @callerState, @patientId, @title, @summary, @appointmentTypeId,
-    @confidence, @ruleDecision, @ruleReasons, @assignedTo, @resolvedBy, @notes, @source
+    @confidence, @ruleDecision, @ruleReasons, @assignedTo, @resolvedBy, @notes, @source,
+    @lockMode, @lockAssignedAt, @lockLastActivityAt, @lockSessionEndedAt, @draftNotes
   )
   ON CONFLICT(id) DO UPDATE SET
     type = excluded.type,
@@ -114,7 +131,12 @@ const UPSERT = `
     assigned_to = excluded.assigned_to,
     resolved_by = excluded.resolved_by,
     notes = excluded.notes,
-    source = excluded.source
+    source = excluded.source,
+    lock_mode = excluded.lock_mode,
+    lock_assigned_at = excluded.lock_assigned_at,
+    lock_last_activity_at = excluded.lock_last_activity_at,
+    lock_session_ended_at = excluded.lock_session_ended_at,
+    draft_notes = excluded.draft_notes
 `
 
 export function repoLoadAllQueueItems(): QueueItem[] {
@@ -154,11 +176,17 @@ export function repoUpdateQueueItem(id: string, patch: Partial<QueueItem>): Queu
 /** J-8: release queue locks held by a deactivated user. */
 export function repoReleaseLocksForUser(userId: string): number {
   if (!persistenceEnabled()) return 0
+  const now = new Date().toISOString()
   const result = getDb().prepare(`
     UPDATE queue_items
-    SET assigned_to = NULL, updated_at = ?
+    SET assigned_to = NULL,
+        lock_mode = NULL,
+        lock_assigned_at = NULL,
+        lock_last_activity_at = NULL,
+        lock_session_ended_at = NULL,
+        updated_at = ?
     WHERE assigned_to = ?
-  `).run(new Date().toISOString(), userId)
+  `).run(now, userId)
   return result.changes
 }
 

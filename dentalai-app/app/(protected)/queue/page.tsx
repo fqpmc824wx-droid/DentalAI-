@@ -1,5 +1,7 @@
 import { requireSession } from '@/lib/access'
 import { getQueueItemsForClinics, getQueueCountsForClinics } from '@/lib/queue/store'
+import { runQueueOwnershipSweep, resolveAssigneeName } from '@/lib/queue/ownership-service'
+import { buildQueueRowInProgressLabel } from '@/lib/queue/ownership'
 import { isTerminalQueueStatus, type QueueItem, type QueueItemType } from '@/lib/queue/types'
 import {
   PageShell,
@@ -43,7 +45,11 @@ const TYPE_INTENT: Record<QueueItemType, PillIntent> = {
   complaint:        'review',
 }
 
-function statusBadge(item: QueueItem): { intent: PillIntent; label: string } {
+function statusBadge(
+  item: QueueItem,
+  inProgressLabel?: string,
+): { intent: PillIntent; label: string } {
+  if (inProgressLabel) return { intent: 'review', label: inProgressLabel }
   if (item.status === 'approved')     return { intent: 'allow',  label: 'Approved' }
   if (item.status === 'rejected')     return { intent: 'block',  label: 'Rejected' }
   if (item.status === 'resolved')     return { intent: 'neutral', label: 'Resolved' }
@@ -65,6 +71,7 @@ export default async function QueuePage({
   const params = await searchParams
   const filter = params.filter ?? 'all'
 
+  runQueueOwnershipSweep(actor.clinicIds)
   const allItems = getQueueItemsForClinics(actor.clinicIds)
   const counts = getQueueCountsForClinics(actor.clinicIds)
 
@@ -115,7 +122,12 @@ export default async function QueuePage({
         />
       ) : (
         <div>
-          {filtered.map(item => (
+          {filtered.map(item => {
+            const inProgress = buildQueueRowInProgressLabel(
+              item,
+              resolveAssigneeName(item.assignedTo),
+            )
+            return (
             <QueueRow
               key={item.id}
               href={`/queue/${item.id}`}
@@ -126,10 +138,11 @@ export default async function QueuePage({
               summary={item.summary}
               reason={item.ruleReasons?.[0]}
               confidence={item.confidence}
-              status={statusBadge(item)}
+              status={statusBadge(item, inProgress)}
               resolved={isTerminalQueueStatus(item.status)}
             />
-          ))}
+            )
+          })}
         </div>
       )}
 

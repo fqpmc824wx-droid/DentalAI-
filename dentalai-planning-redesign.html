@@ -1740,10 +1740,10 @@ body{
     <div class="build-progress">
       <div class="build-progress-label">
         <span>Current slice</span>
-        <span>P12 · S099</span>
+        <span>P12 · S103</span>
       </div>
-      <div class="progress-bar"><div class="progress-fill" style="width:24.54%"></div></div>
-      <div style="font-size:10px;color:var(--color-text-muted);margin-top:7px;line-height:1.45;">66 / 269 slices signed off · queue card actions next</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:26.02%"></div></div>
+      <div style="font-size:10px;color:var(--color-text-muted);margin-top:7px;line-height:1.45;">70 / 269 slices signed off · shift summaries next</div>
     </div>
   </div>
 </aside>
@@ -4038,7 +4038,7 @@ body{
     </div>
 
     <div class="kpi-grid">
-	      <div class="kpi-card"><div class="kpi-label">Current Slice</div><div class="kpi-value">P12 · S096</div><div class="kpi-delta pos">SMS visibility · 65 / 269 slices signed off</div></div>
+	      <div class="kpi-card"><div class="kpi-label">Current Slice</div><div class="kpi-value">P12 · S103</div><div class="kpi-delta pos">Close rule · 70 / 269 slices signed off</div></div>
       <div class="kpi-card"><div class="kpi-label">Dentally</div><div class="kpi-value">Read</div><div class="kpi-delta pos">Read-proof band signed off S029–S040</div></div>
       <div class="kpi-card"><div class="kpi-label">Voice / Phone</div><div class="kpi-value">Later</div><div class="kpi-delta">ElevenLabs later · CallSwitch at live pilot</div></div>
       <div class="kpi-card"><div class="kpi-label">Read Proof</div><div class="kpi-value">Signed off</div><div class="kpi-delta pos">Rotation + contracts + live probe evidence</div></div>
@@ -4064,6 +4064,50 @@ body{
 			      <div class="techlog-entry active">
 			        <div class="techlog-header">
 			          <div class="techlog-num active">2026-06-01 &middot; late BST</div>
+			          <div class="techlog-title">S103 Signed Off &mdash; Close Rule</div>
+			          <div class="techlog-meta">P12 &middot; 70 / 269 &middot; 430 / 430 tests green &middot; verify exit 0</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">S103 &mdash; close rule (D-11)</div>
+			          <div class="techlog-body"><code>lib/queue/close-rule.ts</code> blocks close until allowed outcome and required notes; terminal outcomes immutable. Wired into <code>WorkingToolsPanel</code>. <code>queue-close-rule.test.ts</code> (4 tests).</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">Next slice</div>
+			          <div class="techlog-body"><strong>P12 &middot; S107</strong> &mdash; shift summaries (D-12).</div>
+			        </div>
+			      </div>
+
+			      <div class="techlog-entry">
+			        <div class="techlog-header">
+			          <div class="techlog-num">2026-06-01 &middot; late BST</div>
+			          <div class="techlog-title">S099&ndash;S102 Signed Off &mdash; Queue Ownership Band</div>
+			          <div class="techlog-meta">P12 &middot; 69 / 269 &middot; 426 / 426 tests green &middot; verify exit 0</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">S099 &mdash; auto-lock (D-1)</div>
+			          <div class="techlog-body"><code>lib/queue/ownership.ts</code> hard lock on open, 8 min timer, 10 min inactivity release with draft notes, in-progress row labels. <code>openQueueItemForView</code>, <code>QueueLockHeartbeat</code>.</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">S100 &mdash; soft claim (D-2)</div>
+			          <div class="techlog-body"><code>softClaimQueueItem</code> &mdash; I&apos;ll handle this without inactivity clock until detail open.</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">S101 &mdash; pass to colleague (D-3)</div>
+			          <div class="techlog-body"><code>colleague-presence.ts</code> + <code>passQueueItemToColleague</code> with 5+ char reason and audit. <code>QueueOwnershipPanel</code>.</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">S102 &mdash; session release (D-4)</div>
+			          <div class="techlog-body">Logout and <code>pagehide</code> release locks within two minutes; draft notes preserved. Migration v7 lock columns.</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">Next slice</div>
+			          <div class="techlog-body"><strong>P12 &middot; S103</strong> &mdash; close rule (D-11).</div>
+			        </div>
+			      </div>
+
+			      <div class="techlog-entry">
+			        <div class="techlog-header">
+			          <div class="techlog-num">2026-06-01 &middot; late BST</div>
 			          <div class="techlog-title">S096 Signed Off &mdash; SMS Visibility Panel</div>
 			          <div class="techlog-meta">P12 &middot; 66 / 269 &middot; 416 / 416 tests green &middot; verify exit 0</div>
 			        </div>

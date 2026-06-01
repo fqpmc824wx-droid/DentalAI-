@@ -171,6 +171,17 @@ const MIGRATIONS: Migration[] = [
       CREATE INDEX IF NOT EXISTS idx_settings_clinic ON app_settings(clinic_id);
     `,
   },
+  {
+    version: 7,
+    name: 'queue_ownership_locks',
+    sql: `
+      ALTER TABLE queue_items ADD COLUMN lock_mode TEXT;
+      ALTER TABLE queue_items ADD COLUMN lock_assigned_at TEXT;
+      ALTER TABLE queue_items ADD COLUMN lock_last_activity_at TEXT;
+      ALTER TABLE queue_items ADD COLUMN lock_session_ended_at TEXT;
+      ALTER TABLE queue_items ADD COLUMN draft_notes TEXT;
+    `,
+  },
 ]
 
 function appliedVersions(db: DB): Set<number> {

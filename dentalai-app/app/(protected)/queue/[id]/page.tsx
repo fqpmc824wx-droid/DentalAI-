@@ -1,5 +1,8 @@
 import { requireSession, canAccessClinic } from '@/lib/access'
-import { getQueueItem } from '@/lib/queue/store'
+import { getQueueItem, getQueueItemsForClinics } from '@/lib/queue/store'
+import { openQueueItemForView, resolveAssigneeName } from '@/lib/queue/ownership-service'
+import { buildQueueLockView } from '@/lib/queue/ownership'
+import { buildPassToColleaguePanel } from '@/lib/queue/colleague-presence'
 import { getAppointmentType } from '@/lib/rules/config'
 import { MOCK_PATIENTS, lookupCallerByPhone } from '@/lib/mock/patients'
 import { notFound } from 'next/navigation'
@@ -15,10 +18,27 @@ export default async function QueueItemPage({ params }: { params: Promise<{ id: 
   const actor = await requireSession()
   const { id } = await params
 
-  const item = getQueueItem(id)
+  let item = getQueueItem(id)
   if (!item) notFound()
 
   if (!canAccessClinic(actor, item.clinicId)) notFound()
+
+  const openResult = openQueueItemForView(id, actor)
+  if (openResult) item = openResult.item
+
+  const assigneeName = resolveAssigneeName(item.assignedTo)
+  const lockView = buildQueueLockView({
+    item,
+    actorUserId: actor.userId,
+    assigneeName,
+  })
+  const clinicItems = getQueueItemsForClinics(actor.clinicIds)
+  const passPanel = buildPassToColleaguePanel({
+    item,
+    actorUserId: actor.userId,
+    clinicId: item.clinicId,
+    allClinicItems: clinicItems,
+  })
 
   const apptType = item.appointmentTypeId ? getAppointmentType(item.appointmentTypeId) : null
   const patient = item.patientId ? MOCK_PATIENTS.find(p => p.id === item.patientId) : null
@@ -57,6 +77,10 @@ export default async function QueueItemPage({ params }: { params: Promise<{ id: 
       actor={actor}
       dentallyLinkPanel={dentallyLinkPanel}
       clinicName={clinic?.name}
+      assigneeName={assigneeName}
+      lockView={lockView}
+      passPanel={passPanel}
+      readOnly={openResult?.readOnly ?? lockView.readOnlyForActor}
     />
   )
 }

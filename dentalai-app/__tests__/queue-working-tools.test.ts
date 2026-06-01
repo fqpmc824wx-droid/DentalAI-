@@ -46,8 +46,13 @@ describe('S095 working tools panel (B-6)', () => {
 
   it('tracks lock state for assigned items', () => {
     const lock = deriveQueueLockState({
-      assignedTo: 'user-1',
-      assignedAt: '2026-06-01T10:00:00.000Z',
+      item: {
+        ...baseItem,
+        assignedTo: 'user-1',
+        lockMode: 'hard_lock',
+        lockAssignedAt: '2026-06-01T10:00:00.000Z',
+        lockLastActivityAt: '2026-06-01T10:00:00.000Z',
+      },
       actorUserId: 'user-1',
       assigneeName: 'Alex',
     })

@@ -3,11 +3,13 @@
 import { signOut } from '@/lib/auth'
 import { auth } from '@/lib/auth'
 import { logAuditEvent } from '@/lib/audit/store'
+import { releaseSessionLocksForUser } from '@/lib/queue/ownership-service'
 
 export async function logoutAction(): Promise<void> {
   const session = await auth()
 
   if (session?.user) {
+    releaseSessionLocksForUser(session.user.id)
     logAuditEvent({
       action: 'auth.logout',
       status: 'success',

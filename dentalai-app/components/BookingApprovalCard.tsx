@@ -23,6 +23,10 @@ import HumanBriefingPanel from '@/components/queue/HumanBriefingPanel'
 import DentallyLinkPanel from '@/components/queue/DentallyLinkPanel'
 import WorkingToolsPanel from '@/components/queue/WorkingToolsPanel'
 import SmsVisibilityPanel from '@/components/queue/SmsVisibilityPanel'
+import QueueOwnershipPanel from '@/components/queue/QueueOwnershipPanel'
+import QueueLockHeartbeat from '@/components/queue/QueueLockHeartbeat'
+import type { QueueLockView } from '@/lib/queue/ownership'
+import type { PassToColleaguePanel } from '@/lib/queue/colleague-presence'
 import type { DentallyLinkPanel as DentallyLinkPanelData } from '@/lib/queue/dentally-link-panel'
 import {
   PageShell,
@@ -87,6 +91,10 @@ export default function BookingApprovalCard({
   actor,
   dentallyLinkPanel,
   clinicName,
+  assigneeName,
+  lockView,
+  passPanel,
+  readOnly = false,
 }: {
   item: QueueItem
   apptType: AppointmentType | null
@@ -94,6 +102,10 @@ export default function BookingApprovalCard({
   actor: SessionActor
   dentallyLinkPanel: DentallyLinkPanelData
   clinicName?: string
+  assigneeName?: string
+  lockView?: QueueLockView
+  passPanel?: PassToColleaguePanel
+  readOnly?: boolean
 }) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
@@ -168,7 +180,24 @@ export default function BookingApprovalCard({
     { label: 'NHS',      value: apptType.isNHSCompatible ? 'Compatible' : 'Private only' },
   ] : []
 
-  const hasStickyActions = !isResolved && (
+  const ownershipPanel = lockView && passPanel ? (
+    <>
+      <QueueLockHeartbeat
+        itemId={item.id}
+        enabled={!isResolved && lockView.uiState === 'locked_by_self' && !readOnly}
+      />
+      <div style={{ marginBottom: 20 }}>
+        <QueueOwnershipPanel
+          item={item}
+          lockView={lockView}
+          passPanel={passPanel}
+          readOnly={readOnly}
+        />
+      </div>
+    </>
+  ) : null
+
+  const hasStickyActions = !isResolved && !readOnly && (
     (isBookingRequest && (canApprove || canReject || canEscalate)) ||
     (isEmergency && canRecordEmergency) ||
     isCallback
@@ -181,10 +210,13 @@ export default function BookingApprovalCard({
     staffName: actor.name,
   })
 
+  const resolvedAssigneeName =
+    assigneeName ?? (item.assignedTo === actor.userId ? actor.name : undefined)
+
   const workingTools = buildWorkingToolsPanel({
     item,
     actor,
-    assigneeName: item.assignedTo === actor.userId ? actor.name : undefined,
+    assigneeName: resolvedAssigneeName,
   })
 
   const smsVisibility = buildSmsVisibilityPanel({ item })
@@ -237,6 +269,8 @@ export default function BookingApprovalCard({
           4. AI prepared summary (why)
           5. Actions (sticky on mobile)
       */}
+
+      {ownershipPanel}
 
       <div style={{ marginBottom: 20 }}>
         <HumanBriefingPanel briefing={briefing} />

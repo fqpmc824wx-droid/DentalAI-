@@ -59,6 +59,12 @@ export type QueueItem = {
   assignedTo?: string                // user id
   resolvedBy?: string                // user id
   notes?: string                     // required for emergency outcomes
+  /** S099–S102 — queue ownership (D-1–D-4) */
+  lockMode?: 'soft_claim' | 'hard_lock'
+  lockAssignedAt?: string            // ISO — hard lock start or soft-claim time
+  lockLastActivityAt?: string        // ISO — last activity on open item
+  lockSessionEndedAt?: string        // ISO — browser/nav away; release after 2 min
+  draftNotes?: string                // preserved when lock auto-releases
 
   // Source
   source: 'ai_call' | 'manual' | 'mock'

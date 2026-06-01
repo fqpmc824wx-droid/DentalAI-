@@ -3,6 +3,7 @@
  */
 
 import { isTerminalQueueStatus, type QueueItem, type QueueStatus } from './types'
+import { releaseLockPatch } from './ownership'
 import { persistenceEnabled } from '@/lib/db/client'
 import {
   repoGetQueueItem,
@@ -188,9 +189,14 @@ export function releaseLocksForUserInMemory(userId: string): number {
   const items = load()
   for (const item of items) {
     if (item.assignedTo === userId) {
-      item.assignedTo = undefined
-      item.updatedAt = new Date().toISOString()
-      persistItem(item)
+      const updated: QueueItem = {
+        ...item,
+        ...releaseLockPatch(item, item.notes),
+        updatedAt: new Date().toISOString(),
+      }
+      const idx = items.indexOf(item)
+      items[idx] = updated
+      persistItem(updated)
       count += 1
     }
   }

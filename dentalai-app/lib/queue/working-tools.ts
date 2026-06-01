@@ -7,6 +7,7 @@
 
 import type { QueueItem, QueueItemType } from './types'
 import type { SessionActor } from '@/lib/access-control'
+import { LOCK_INACTIVITY_RELEASE_MS, buildQueueLockView } from './ownership'
 
 export type HoldingSmsStatus = 'none' | 'queued' | 'sent' | 'failed' | 'suppressed'
 
@@ -24,6 +25,7 @@ export type WorkingToolsOutcomeOption = {
 }
 
 export type WorkingToolsPanel = {
+  ownership: ReturnType<typeof buildQueueLockView>
   scratchpadStorageKey: string
   holdingSms: {
     status: HoldingSmsStatus
@@ -47,7 +49,7 @@ export type WorkingToolsPanel = {
   auditTrailHint: string
 }
 
-const LOCK_DURATION_MS = 30 * 60 * 1000
+const LOCK_DURATION_MS = LOCK_INACTIVITY_RELEASE_MS
 
 const CALLBACK_OUTCOMES: WorkingToolsOutcomeOption[] = [
   { value: 'reached', label: 'Patient reached — resolved' },
@@ -133,33 +135,47 @@ export function suggestCallbackTime(referenceIso: string): string {
 }
 
 export function deriveQueueLockState(input: {
-  assignedTo?: string
-  assignedAt?: string
+  item: QueueItem
   actorUserId: string
   assigneeName?: string
 }): Pick<WorkingToolsPanel, 'lockState' | 'lockExpiresAt' | 'lockHeldByName' | 'assigneeId' | 'assigneeName'> {
-  if (!input.assignedTo) {
+  const view = buildQueueLockView({
+    item: input.item,
+    actorUserId: input.actorUserId,
+    assigneeName: input.assigneeName,
+  })
+
+  const activityAt = input.item.lockLastActivityAt ?? input.item.lockAssignedAt
+  const lockExpiresAt = activityAt
+    ? new Date(Date.parse(activityAt) + LOCK_DURATION_MS).toISOString()
+    : undefined
+
+  if (view.uiState === 'unlocked') {
     return { lockState: 'unlocked' }
   }
-
-  const assignedAt = input.assignedAt ? Date.parse(input.assignedAt) : Date.now()
-  const lockExpiresAt = new Date(assignedAt + LOCK_DURATION_MS).toISOString()
-
-  if (input.assignedTo === input.actorUserId) {
+  if (view.uiState === 'soft_claim_by_self' || view.uiState === 'soft_claim_by_other') {
+    const softSelf = view.uiState === 'soft_claim_by_self'
+    return {
+      lockState: softSelf ? 'locked_by_self' : 'locked_by_other',
+      lockHeldByName: softSelf ? undefined : view.assigneeName ?? 'Another staff member',
+      assigneeId: view.assigneeId,
+      assigneeName: view.assigneeName,
+    }
+  }
+  if (view.uiState === 'locked_by_self') {
     return {
       lockState: 'locked_by_self',
       lockExpiresAt,
-      assigneeId: input.assignedTo,
-      assigneeName: input.assigneeName,
+      assigneeId: view.assigneeId,
+      assigneeName: view.assigneeName,
     }
   }
-
   return {
     lockState: 'locked_by_other',
     lockExpiresAt,
-    lockHeldByName: input.assigneeName ?? 'Another staff member',
-    assigneeId: input.assignedTo,
-    assigneeName: input.assigneeName,
+    lockHeldByName: view.assigneeName ?? 'Another staff member',
+    assigneeId: view.assigneeId,
+    assigneeName: view.assigneeName,
   }
 }
 
@@ -169,9 +185,13 @@ export function buildWorkingToolsPanel(input: {
   assigneeName?: string
 }): WorkingToolsPanel {
   const callbackAttempts = mockCallbackAttempts(input.item)
+  const ownership = buildQueueLockView({
+    item: input.item,
+    actorUserId: input.actor.userId,
+    assigneeName: input.assigneeName,
+  })
   const lock = deriveQueueLockState({
-    assignedTo: input.item.assignedTo,
-    assignedAt: input.item.updatedAt ?? input.item.createdAt,
+    item: input.item,
     actorUserId: input.actor.userId,
     assigneeName: input.assigneeName,
   })
@@ -181,6 +201,7 @@ export function buildWorkingToolsPanel(input: {
     input.item.type === 'emergency' ? EMERGENCY_OUTCOMES : CALLBACK_OUTCOMES
 
   return {
+    ownership,
     scratchpadStorageKey: `dentalai-scratchpad-${input.item.id}`,
     holdingSms: mockHoldingSms(input.item),
     suggestedCallbackTime: suggestCallbackTime(input.item.createdAt),

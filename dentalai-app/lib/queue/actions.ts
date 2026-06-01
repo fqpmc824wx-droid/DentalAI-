@@ -9,6 +9,13 @@ import {
   AccessReasonRequiredError,
 } from '@/lib/access'
 import { getQueueItem, updateQueueItem } from './store'
+import {
+  hardLockPatch,
+  releaseLockPatch,
+  softClaimPatch,
+} from './ownership'
+import { validatePassReason } from './colleague-presence'
+import { getUserById } from '@/lib/users/store'
 import { logAuditEvent } from '@/lib/audit/store'
 import { assertActionPermitted, assertBookingMutationPermitted, PermissionDeniedError } from './permissions'
 import type { AppointmentTypeId } from '@/lib/rules/types'
@@ -462,7 +469,8 @@ export async function modifyAndApproveQueueItem(
   return { ok: true }
 }
 
-export async function claimQueueItem(
+/** S100 — soft claim without inactivity timeout until open (D-2). */
+export async function softClaimQueueItem(
   itemId: string,
   accessReason?: string,
 ): Promise<ActionResult> {
@@ -473,12 +481,13 @@ export async function claimQueueItem(
   const denied = checkActionPermission(actor, item, 'acknowledge')
   if (denied) return denied
 
-  if (item.assignedTo && item.assignedTo !== actor.userId) {
+  if (item.assignedTo && item.assignedTo !== actor.userId && item.lockMode === 'hard_lock') {
     return { ok: false, error: 'Another staff member is working this item' }
   }
 
+  const now = new Date().toISOString()
   updateQueueItem(itemId, {
-    assignedTo: actor.userId,
+    ...softClaimPatch(actor.userId, now),
     status: item.status === 'pending' ? 'acknowledged' : item.status,
   })
   logAuditEvent({
@@ -488,11 +497,19 @@ export async function claimQueueItem(
     clinicId: item.clinicId,
     queueItemRef: itemId,
     patientRef: item.patientId,
-    summary: `${actor.name} claimed queue item: ${item.title}`,
-    metadata: { type: item.type, lockClaim: true },
+    summary: `${actor.name} soft-claimed: ${item.title}`,
+    metadata: { type: item.type, lockMode: 'soft_claim' },
   })
   revalidateAll()
   return { ok: true }
+}
+
+/** @deprecated Use softClaimQueueItem — kept as alias for existing UI. */
+export async function claimQueueItem(
+  itemId: string,
+  accessReason?: string,
+): Promise<ActionResult> {
+  return softClaimQueueItem(itemId, accessReason)
 }
 
 export async function releaseQueueItem(
@@ -509,7 +526,7 @@ export async function releaseQueueItem(
     return { ok: false, error: 'You do not hold the lock on this item' }
   }
 
-  updateQueueItem(itemId, { assignedTo: undefined })
+  updateQueueItem(itemId, releaseLockPatch(item, item.notes))
   logAuditEvent({
     action: 'queue.task_acknowledged',
     status: 'success',
@@ -521,6 +538,97 @@ export async function releaseQueueItem(
     metadata: { type: item.type, lockRelease: true },
   })
   revalidateAll()
+  return { ok: true }
+}
+
+/** S099 — refresh hard-lock activity while detail is open (D-1). */
+export async function touchQueueLockActivity(
+  itemId: string,
+  accessReason?: string,
+): Promise<ActionResult> {
+  const r = await getActorAndItem(itemId, accessReason)
+  if (!r.ok) return r
+
+  const { actor, item } = r
+  if (item.assignedTo !== actor.userId || item.lockMode !== 'hard_lock') {
+    return { ok: true }
+  }
+
+  updateQueueItem(itemId, {
+    lockLastActivityAt: new Date().toISOString(),
+    lockSessionEndedAt: undefined,
+  })
+  return { ok: true }
+}
+
+/** S101 — pass lock to same-clinic colleague (D-3). */
+export async function passQueueItemToColleague(
+  itemId: string,
+  targetUserId: string,
+  rawReason: string,
+  accessReason?: string,
+): Promise<ActionResult> {
+  const reasonCheck = validatePassReason(rawReason)
+  if (!reasonCheck.ok) return { ok: false, error: reasonCheck.error! }
+
+  const targetParsed = z.string().min(1).max(64).regex(/^[a-z0-9-]+$/).safeParse(targetUserId)
+  if (!targetParsed.success) return { ok: false, error: 'Invalid colleague' }
+
+  const r = await getActorAndItem(itemId, accessReason)
+  if (!r.ok) return r
+
+  const { actor, item } = r
+  if (item.assignedTo !== actor.userId) {
+    return { ok: false, error: 'You must hold the lock to pass this item' }
+  }
+
+  const target = getUserById(targetParsed.data)
+  if (!target || !target.clinicIds.includes(item.clinicId)) {
+    return { ok: false, error: 'Colleague must belong to this clinic' }
+  }
+  if (target.id === actor.userId) {
+    return { ok: false, error: 'Choose a different colleague' }
+  }
+
+  const now = new Date().toISOString()
+  updateQueueItem(itemId, {
+    ...hardLockPatch(target.id, now),
+    notes: item.notes,
+  })
+
+  logAuditEvent({
+    action: 'queue.task_escalated',
+    status: 'success',
+    actor: { userId: actor.userId, name: actor.name, role: actor.role, email: actor.email },
+    clinicId: item.clinicId,
+    queueItemRef: itemId,
+    patientRef: item.patientId,
+    summary: `${actor.name} passed ${item.title} to ${target.name}`,
+    metadata: {
+      type: item.type,
+      passTo: target.id,
+      passToName: target.name,
+      reason: rawReason.trim(),
+    },
+  })
+  revalidateAll()
+  return { ok: true }
+}
+
+/** S102 — mark session ended for delayed lock release (D-4). */
+export async function markQueueSessionEnded(
+  itemId: string,
+  accessReason?: string,
+): Promise<ActionResult> {
+  const r = await getActorAndItem(itemId, accessReason)
+  if (!r.ok) return r
+
+  const { actor, item } = r
+  if (item.assignedTo !== actor.userId || item.lockMode !== 'hard_lock') {
+    return { ok: true }
+  }
+
+  updateQueueItem(itemId, { lockSessionEndedAt: new Date().toISOString() })
   return { ok: true }
 }
 
