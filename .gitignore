@@ -1,0 +1,25 @@
+# Dependencies & build output
+node_modules/
+.next/
+*.tsbuildinfo
+
+# Secrets — never commit
+.env
+.env.local
+.env.*.local
+*.env
+!.env.example
+
+# Local SQLite persistence
+.data/
+*.db
+*.db-shm
+*.db-wal
+
+# OS & editor
+.DS_Store
+Thumbs.db
+.claude/
+
+# QA screenshots (regenerate locally)
+browser-evidence/

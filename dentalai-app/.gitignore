@@ -1,0 +1,14 @@
+node_modules/
+.next/
+.env
+.env.local
+*.env
+*.tsbuildinfo
+.DS_Store
+.claude/
+
+# Local permanent memory (SQLite database file + write-ahead logs) — never committed
+.data/
+*.db
+*.db-shm
+*.db-wal
