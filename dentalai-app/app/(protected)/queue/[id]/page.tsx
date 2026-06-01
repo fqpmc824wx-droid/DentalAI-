@@ -14,6 +14,7 @@ import { mapScenarioToIdentityBadge } from '@/lib/queue/card-identity'
 import { buildDentallyLinkPanel } from '@/lib/queue/dentally-link-panel'
 import { buildSamePatientBanner } from '@/lib/queue/same-patient-banner'
 import { buildDuplicateCallerAlert } from '@/lib/queue/duplicate-caller'
+import { buildContactHistoryPanel } from '@/lib/queue/contact-history'
 import { getClinic } from '@/lib/mock/clinics'
 
 export default async function QueueItemPage({ params }: { params: Promise<{ id: string }> }) {
@@ -81,6 +82,12 @@ export default async function QueueItemPage({ params }: { params: Promise<{ id: 
     allItems: clinicItems,
   })
 
+  const contactHistory = buildContactHistoryPanel({
+    item,
+    patient: patient ?? null,
+    allItems: clinicItems,
+  })
+
   return (
     <BookingApprovalCard
       item={item}
@@ -95,6 +102,7 @@ export default async function QueueItemPage({ params }: { params: Promise<{ id: 
       readOnly={openResult?.readOnly ?? lockView.readOnlyForActor}
       samePatientBanner={samePatientBanner}
       duplicateCallerAlert={duplicateCallerAlert}
+      contactHistory={contactHistory}
     />
   )
 }

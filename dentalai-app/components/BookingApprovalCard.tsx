@@ -27,9 +27,11 @@ import QueueOwnershipPanel from '@/components/queue/QueueOwnershipPanel'
 import QueueLockHeartbeat from '@/components/queue/QueueLockHeartbeat'
 import SamePatientBanner from '@/components/queue/SamePatientBanner'
 import DuplicateCallerAlert from '@/components/queue/DuplicateCallerAlert'
+import ContactHistoryPanel from '@/components/queue/ContactHistoryPanel'
 import type { QueueLockView } from '@/lib/queue/ownership'
 import type { SamePatientBanner as SamePatientBannerData } from '@/lib/queue/same-patient-banner'
 import type { DuplicateCallerAlert as DuplicateCallerAlertData } from '@/lib/queue/duplicate-caller'
+import type { ContactHistoryPanel as ContactHistoryPanelData } from '@/lib/queue/contact-history'
 import type { PassToColleaguePanel } from '@/lib/queue/colleague-presence'
 import type { DentallyLinkPanel as DentallyLinkPanelData } from '@/lib/queue/dentally-link-panel'
 import {
@@ -101,6 +103,7 @@ export default function BookingApprovalCard({
   readOnly = false,
   samePatientBanner,
   duplicateCallerAlert,
+  contactHistory,
 }: {
   item: QueueItem
   apptType: AppointmentType | null
@@ -114,6 +117,7 @@ export default function BookingApprovalCard({
   readOnly?: boolean
   samePatientBanner?: SamePatientBannerData
   duplicateCallerAlert?: DuplicateCallerAlertData
+  contactHistory?: ContactHistoryPanelData
 }) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
@@ -286,6 +290,12 @@ export default function BookingApprovalCard({
       <div style={{ marginBottom: 20 }}>
         <HumanBriefingPanel briefing={briefing} />
       </div>
+
+      {contactHistory && (
+        <div style={{ marginBottom: 20 }}>
+          <ContactHistoryPanel panel={contactHistory} />
+        </div>
+      )}
 
       <div style={{ marginBottom: 20 }}>
         <DentallyLinkPanel panel={dentallyLinkPanel} />

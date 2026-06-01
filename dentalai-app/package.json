@@ -29,7 +29,8 @@
     "queue:callback-tracker-signoff": "node scripts/queue-callback-tracker-signoff.mjs",
     "queue:return-call-signoff": "node scripts/queue-return-call-signoff.mjs",
     "queue:same-patient-banner-signoff": "node scripts/queue-same-patient-banner-signoff.mjs",
-    "queue:duplicate-caller-signoff": "node scripts/queue-duplicate-caller-signoff.mjs"
+    "queue:duplicate-caller-signoff": "node scripts/queue-duplicate-caller-signoff.mjs",
+    "queue:contact-history-signoff": "node scripts/queue-contact-history-signoff.mjs"
   },
   "dependencies": {
     "better-sqlite3": "^12.10.0",
