@@ -18,9 +18,11 @@ import {
 import { canRolePerformAction, isActionValidForType, isBookingApprovalBlockedByRules } from '@/lib/queue/permissions'
 import { buildHumanBriefingPanel } from '@/lib/queue/briefing'
 import { buildWorkingToolsPanel } from '@/lib/queue/working-tools'
+import { buildSmsVisibilityPanel } from '@/lib/queue/sms-visibility'
 import HumanBriefingPanel from '@/components/queue/HumanBriefingPanel'
 import DentallyLinkPanel from '@/components/queue/DentallyLinkPanel'
 import WorkingToolsPanel from '@/components/queue/WorkingToolsPanel'
+import SmsVisibilityPanel from '@/components/queue/SmsVisibilityPanel'
 import type { DentallyLinkPanel as DentallyLinkPanelData } from '@/lib/queue/dentally-link-panel'
 import {
   PageShell,
@@ -185,6 +187,8 @@ export default function BookingApprovalCard({
     assigneeName: item.assignedTo === actor.userId ? actor.name : undefined,
   })
 
+  const smsVisibility = buildSmsVisibilityPanel({ item })
+
   return (
     <PageShell hasStickyActions={hasStickyActions}>
       <Link href="/queue" style={{
@@ -244,6 +248,10 @@ export default function BookingApprovalCard({
 
       <div style={{ marginBottom: 20 }}>
         <WorkingToolsPanel panel={workingTools} item={item} actor={actor} />
+      </div>
+
+      <div style={{ marginBottom: 20 }}>
+        <SmsVisibilityPanel panel={smsVisibility} />
       </div>
 
       {item.ruleDecision && (

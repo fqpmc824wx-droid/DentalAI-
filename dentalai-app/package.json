@@ -23,7 +23,8 @@
     "queue:card-fields-signoff": "node scripts/queue-card-fields-signoff.mjs",
     "queue:briefing-signoff": "node scripts/queue-briefing-signoff.mjs",
     "queue:dentally-link-signoff": "node scripts/queue-dentally-link-signoff.mjs",
-    "queue:working-tools-signoff": "node scripts/queue-working-tools-signoff.mjs"
+    "queue:working-tools-signoff": "node scripts/queue-working-tools-signoff.mjs",
+    "queue:sms-visibility-signoff": "node scripts/queue-sms-visibility-signoff.mjs"
   },
   "dependencies": {
     "better-sqlite3": "^12.10.0",
