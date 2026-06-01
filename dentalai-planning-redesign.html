@@ -1740,10 +1740,10 @@ body{
     <div class="build-progress">
       <div class="build-progress-label">
         <span>Current slice</span>
-        <span>P09 · S041</span>
+        <span>P12 · S087</span>
       </div>
-      <div class="progress-bar"><div class="progress-fill" style="width:14.87%"></div></div>
-      <div style="font-size:10px;color:var(--color-text-muted);margin-top:7px;line-height:1.45;">40 / 269 slices signed off · P07–P08 Dentally contracts closed</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:21.19%"></div></div>
+      <div style="font-size:10px;color:var(--color-text-muted);margin-top:7px;line-height:1.45;">57 / 269 slices signed off · P09–P10 identity band closed</div>
     </div>
   </div>
 </aside>
@@ -2430,7 +2430,7 @@ body{
 	      <div class="page-sub">What's being built right now, what's already done, and what's still missing &mdash; in plain English. The detailed engineering notes are tucked away at the bottom.</div>
 	    </div>
 	    <div class="kpi-grid">
-		      <div class="kpi-card"><div class="kpi-label">Progress</div><div class="kpi-value">16 / 269</div><div class="kpi-delta pos">small, traceable slices · split again if implementation risk demands it</div></div>
+		      <div class="kpi-card"><div class="kpi-label">Progress</div><div class="kpi-value">57 / 269</div><div class="kpi-delta pos">P09–P10 identity band signed off · queue OS next</div></div>
 	      <div class="kpi-card"><div class="kpi-label">The plan</div><div class="kpi-value">36 stages</div><div class="kpi-delta pos">careful gates · one pilot clinic first</div></div>
 	      <div class="kpi-card"><div class="kpi-label">Ready for patients?</div><div class="kpi-value">Not yet</div><div class="kpi-delta warn">needs memory, queue, calls, slot-holds</div></div>
 	      <div class="kpi-card"><div class="kpi-label">Rollout</div><div class="kpi-value">1 clinic</div><div class="kpi-delta">then the rest, one at a time</div></div>
@@ -2447,19 +2447,19 @@ body{
     </div>
 
     <div class="card" style="border-left:3px solid var(--color-success)">
-      <div class="card-header"><div class="card-title">Right now <span class="rule-phase rp4" style="margin-left:8px;vertical-align:middle">S029–S040 signed off</span></div></div>
+      <div class="card-header"><div class="card-title">Right now <span class="rule-phase rp4" style="margin-left:8px;vertical-align:middle">S041–S057 signed off</span></div></div>
       <div class="card-body">
-	        <p style="color:var(--color-text);line-height:1.7;font-size:var(--text-base)"><strong>Dentally read-proof band is signed off.</strong> Rotation evidence recorded (2026-05-01, practice owner confirmed pre-build). Live probe healthy on <code>api.dentally.co</code>. Endpoint truth registry and identity, queue-card, approval-card, recall, and degraded-state contracts ship under <code>lib/dentally/contracts/</code>. Formal sign-off artifact at <code>.data/evidence/dentally-read-proof-signoff.json</code>.</p>
-	        <p style="color:var(--color-text-muted);line-height:1.7;margin-top:10px"><strong style="color:var(--color-text)">Proof:</strong> <code>npm run verify</code> green — <strong>355</strong> tests, <strong>30</strong> files, production build exit 0.</p>
-	        <p style="color:var(--color-text-muted);font-size:var(--text-xs);margin-top:12px">Count <strong>40 / 269</strong> · next <strong>S041+</strong> identity scenario slices (P09).</p>
+	        <p style="color:var(--color-text);line-height:1.7;font-size:var(--text-base)"><strong>P09–P10 identity + caller authorisation band is signed off.</strong> <code>lib/identity/</code> ships scenario states, caller-number classification, name+DOB verification with postcode fallback, disclosure boundaries, locked Session 2 scripts, and privacy-safe audit payloads. Sign-off artifact at <code>.data/evidence/identity-band-signoff.json</code> via <code>npm run identity:band-signoff</code>.</p>
+	        <p style="color:var(--color-text-muted);line-height:1.7;margin-top:10px"><strong style="color:var(--color-text)">Proof:</strong> <code>npm run verify</code> green — <strong>379</strong> tests, <strong>31</strong> files, production build exit 0.</p>
+	        <p style="color:var(--color-text-muted);font-size:var(--text-xs);margin-top:12px">Count <strong>57 / 269</strong> · next <strong>S087+</strong> queue taxonomy (P12).</p>
       </div>
     </div>
 
     <div class="section">
       <div class="section-header">What happens next</div>
       <div class="rule-list">
-	        <div class="rule-row"><div class="rule-num">Now</div><div><div class="rule-name">Identity scenario slices</div><div class="rule-desc">P09 · S041+ — caller identity states after Dentally field mapping gate (S033 signed off).</div></div><div class="rule-phase rp3">Active</div></div>
-	        <div class="rule-row"><div class="rule-num">Next</div><div><div class="rule-name">Queue OS features</div><div class="rule-desc">First-claim locking, escalation clocks, SMS suppression — after identity band.</div></div><div class="rule-phase rp2">Queued</div></div>
+	        <div class="rule-row"><div class="rule-num">Now</div><div><div class="rule-name">Queue OS taxonomy</div><div class="rule-desc">P12 · S087+ — locked queue item taxonomy, reference codes, flags, and priority rules.</div></div><div class="rule-phase rp3">Active</div></div>
+	        <div class="rule-row"><div class="rule-num">Next</div><div><div class="rule-name">Queue OS features</div><div class="rule-desc">First-claim locking, escalation clocks, SMS suppression — after taxonomy band.</div></div><div class="rule-phase rp2">Queued</div></div>
 	        <div class="rule-row"><div class="rule-num">Then</div><div><div class="rule-name">Scenario policy band</div><div class="rule-desc">P11 conversation boundaries after caller authorisation slices.</div></div><div class="rule-phase rp2">Queued</div></div>
       </div>
     </div>
@@ -2467,6 +2467,7 @@ body{
     <div class="section">
       <div class="section-header">Done so far &mdash; the journal</div>
       <div class="rule-list">
+        <div class="rule-row"><div class="rule-num">1 Jun</div><div><div class="rule-name">S041–S057 signed off &mdash; identity + caller authorisation</div><div class="rule-desc"><code>lib/identity/</code> scenario resolver, verification, disclosure, scripts, audit-safe payloads. <code>identity-scenarios.test.ts</code>. 379 tests green.</div></div><div class="rule-phase rp4">Done</div></div>
         <div class="rule-row"><div class="rule-num">1 Jun</div><div><div class="rule-name">S029–S040 signed off &mdash; Dentally read proof + data contracts</div><div class="rule-desc">Rotation evidence, live probe, endpoint truth, identity/queue/approval/recall contracts, degraded states, formal read-proof sign-off artifact. <code>dentally-contracts.test.ts</code>. 355 tests green.</div></div><div class="rule-phase rp4">Done</div></div>
         <div class="rule-row"><div class="rule-num">1 Jun</div><div><div class="rule-name">S030–S031 signed off &mdash; Dentally health + GET-only proof</div><div class="rule-desc">Integrations readiness surface verified; GET-only client and endpoint registry tests.</div></div><div class="rule-phase rp4">Done</div></div>
         <div class="rule-row"><div class="rule-num">1 Jun</div><div><div class="rule-name">S024–S028 signed off &mdash; schema foundation verification</div><div class="rule-desc">Consolidated evidence: migrations v1–v6, durable queue/audit/users/login repos, scrypt hashes, restart survival. <code>schema-foundation.test.ts</code>. 336 tests green.</div></div><div class="rule-phase rp4">Done</div></div>
@@ -2513,8 +2514,8 @@ body{
 	    <div class="section">
 	      <div class="section-header">Exact Active Slice</div>
 	      <div class="rule-list">
-		        <div class="rule-row"><div class="rule-num">Done</div><div><div class="rule-name">S001-S040 signed off</div><div class="rule-desc">Foundation through Dentally read-proof band and P07–P08 data contracts.</div></div><div class="rule-phase rp4">40 / 269</div></div>
-		        <div class="rule-row"><div class="rule-num">Now</div><div><div class="rule-name">P09 · S041+ — Identity scenario slices</div><div class="rule-desc">Caller identity states after Dentally field mapping gate.</div></div><div class="rule-phase rp3">Active</div></div>
+		        <div class="rule-row"><div class="rule-num">Done</div><div><div class="rule-name">S001-S057 signed off</div><div class="rule-desc">Foundation through Dentally read-proof and P09–P10 identity authorisation band.</div></div><div class="rule-phase rp4">57 / 269</div></div>
+		        <div class="rule-row"><div class="rule-num">Now</div><div><div class="rule-name">P12 · S087+ — Queue taxonomy</div><div class="rule-desc">Locked queue item taxonomy (A-1–A-8), reference routing, flags, priority.</div></div><div class="rule-phase rp3">Active</div></div>
 	      </div>
 	    </div>
 
@@ -3421,7 +3422,7 @@ body{
 
   const implementationStageMap = [
     {home:`P11 · S058-S086`, dependencies:`P09-P10 identity · P31-P33 live telephony`, evidence:`Scenario-policy fixtures, refusal and handoff tests, simulated-call acceptance`, status:`Expanded`},
-    {home:`P09-P10 · S041-S057`, dependencies:`P07-P08 Dentally identity contract`, evidence:`Identity-state unit tests, disclosure-boundary tests, privacy-safe browser fixtures`, status:`Mapped`},
+    {home:`P09-P10 · S041-S057`, dependencies:`P07-P08 Dentally identity contract`, evidence:`Identity-state unit tests, disclosure-boundary tests, privacy-safe browser fixtures`, status:`Signed off`},
     {home:`P12 · S087-S090`, dependencies:`P04 persistence · P06 permissions`, evidence:`Queue schema migration, taxonomy tests, priority and flag fixtures`, status:`Mapped`},
     {home:`P12-P13 · S091-S096`, dependencies:`P08 queue-card Dentally contract`, evidence:`Queue-card component tests, autosave test, transcript and Dentally-link browser acceptance`, status:`Mapped`},
     {home:`P12-P17 · S089-S092 · S108 · S115-S117 · S122`, dependencies:`P09 identity · P17 emergency boundaries`, evidence:`Summary fixtures, flag rules tests, escalation-clock tests, staff-facing browser review`, status:`Expanded`},
@@ -4035,7 +4036,7 @@ body{
     </div>
 
     <div class="kpi-grid">
-	      <div class="kpi-card"><div class="kpi-label">Current Slice</div><div class="kpi-value">P09 · S041</div><div class="kpi-delta pos">Identity band · 40 / 269 slices signed off</div></div>
+	      <div class="kpi-card"><div class="kpi-label">Current Slice</div><div class="kpi-value">P12 · S087</div><div class="kpi-delta pos">Queue taxonomy · 57 / 269 slices signed off</div></div>
       <div class="kpi-card"><div class="kpi-label">Dentally</div><div class="kpi-value">Read</div><div class="kpi-delta pos">Read-proof band signed off S029–S040</div></div>
       <div class="kpi-card"><div class="kpi-label">Voice / Phone</div><div class="kpi-value">Later</div><div class="kpi-delta">ElevenLabs later · CallSwitch at live pilot</div></div>
       <div class="kpi-card"><div class="kpi-label">Read Proof</div><div class="kpi-value">Signed off</div><div class="kpi-delta pos">Rotation + contracts + live probe evidence</div></div>
@@ -4061,6 +4062,30 @@ body{
 			      <div class="techlog-entry active">
 			        <div class="techlog-header">
 			          <div class="techlog-num active">2026-06-01 &middot; late BST</div>
+			          <div class="techlog-title">S041&ndash;S057 Signed Off &mdash; Identity + Caller Authorisation</div>
+			          <div class="techlog-meta">P09&ndash;P10 band &middot; 57 / 269 &middot; 379 / 379 tests green &middot; verify exit 0</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">S041&ndash;S045 &mdash; scenario states</div>
+			          <div class="techlog-body"><code>lib/identity/scenarios.ts</code> maps mock lookup + caller-number kinds to canonical <code>IdentityScenarioState</code> (confirmed, probable, multiple_match, shared_household, new_patient, withheld, borrowed_phone, failed_verification, third_party, child_guardian). Caller ID locked as lookup hint only (<code>CALLER_ID_IS_LOOKUP_HINT_ONLY</code>).</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">S046&ndash;S057 &mdash; verification, disclosure, scripts, audit</div>
+			          <div class="techlog-body"><code>verification.ts</code> name+DOB primary, postcode fallback, max 2 attempts, mid-call reverification. <code>disclosure.ts</code> blocks pre-verify PHI/financial topics. <code>scripts.ts</code> locked S2-ScA&ndash;G copy. <code>audit-payload.ts</code> privacy-minimised session snapshots. <code>identity-scenarios.test.ts</code> (24 tests).</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">Formal sign-off</div>
+			          <div class="techlog-body"><code>npm run identity:band-signoff</code> &rarr; <code>.data/evidence/identity-band-signoff.json</code>.</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">Next slice</div>
+			          <div class="techlog-body"><strong>P12 &middot; S087+</strong> &mdash; queue item taxonomy and reference routing.</div>
+			        </div>
+			      </div>
+
+			      <div class="techlog-entry">
+			        <div class="techlog-header">
+			          <div class="techlog-num">2026-06-01 &middot; late BST</div>
 			          <div class="techlog-title">S029&ndash;S040 Signed Off &mdash; Dentally Read Proof + Data Contracts</div>
 			          <div class="techlog-meta">P07&ndash;P08 band &middot; 40 / 269 &middot; 355 / 355 tests green &middot; verify exit 0</div>
 			        </div>
@@ -4082,7 +4107,7 @@ body{
 			        </div>
 			        <div class="techlog-section">
 			          <div class="techlog-section-label">Next slice</div>
-			          <div class="techlog-body"><strong>P09 &middot; S041+</strong> &mdash; caller identity scenario states.</div>
+			          <div class="techlog-body"><strong>P09 &middot; S041+</strong> &mdash; caller identity scenario states (completed in entry above).</div>
 			        </div>
 			      </div>
 

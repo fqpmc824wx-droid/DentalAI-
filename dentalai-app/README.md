@@ -2,7 +2,7 @@
 
 AI-powered reception operations for UK dental practices. AI prepares work. Humans approve diary-changing actions. Dentally confirms successful appointments.
 
-> **Current status:** foundation scaffold with enterprise typed SQLite, staff lifecycle (S016), super-admin MFA, audit hardening (S017–S018), env separation/CSP/health (S019), backup evidence (S020), role navigation (S021), browser acceptance re-run (S022), schema foundation band (S023–S028), and Dentally read-proof + data contracts (S029–S040). Active roadmap in `../dentalai-planning-redesign.html`. **40 / 269** slices signed off. Not pilot-ready yet — identity scenario band (S041+), queue OS, telephony, slot holds, and Dentally writes remain ahead.
+> **Current status:** foundation scaffold with enterprise typed SQLite, staff lifecycle (S016), super-admin MFA, audit hardening (S017–S018), env separation/CSP/health (S019), backup evidence (S020), role navigation (S021), browser acceptance re-run (S022), schema foundation band (S023–S028), Dentally read-proof + data contracts (S029–S040), and caller identity + authorisation band (S041–S057). Active roadmap in `../dentalai-planning-redesign.html`. **57 / 269** slices signed off. Not pilot-ready yet — queue OS taxonomy (S087+), telephony, slot holds, and Dentally writes remain ahead.
 
 ## Current Truth
 
