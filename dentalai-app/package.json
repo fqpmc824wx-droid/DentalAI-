@@ -20,7 +20,8 @@
     "dentally:read-proof-signoff": "node scripts/dentally-read-proof-signoff.mjs",
     "identity:band-signoff": "node scripts/identity-band-signoff.mjs",
     "queue:taxonomy-band-signoff": "node scripts/queue-taxonomy-band-signoff.mjs",
-    "queue:card-fields-signoff": "node scripts/queue-card-fields-signoff.mjs"
+    "queue:card-fields-signoff": "node scripts/queue-card-fields-signoff.mjs",
+    "queue:briefing-signoff": "node scripts/queue-briefing-signoff.mjs"
   },
   "dependencies": {
     "better-sqlite3": "^12.10.0",

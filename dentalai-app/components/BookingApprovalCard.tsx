@@ -16,6 +16,8 @@ import {
   modifyAndApproveQueueItem,
 } from '@/lib/queue/actions'
 import { canRolePerformAction, isActionValidForType, isBookingApprovalBlockedByRules } from '@/lib/queue/permissions'
+import { buildHumanBriefingPanel } from '@/lib/queue/briefing'
+import HumanBriefingPanel from '@/components/queue/HumanBriefingPanel'
 import {
   PageShell,
   PageHeader,
@@ -162,6 +164,13 @@ export default function BookingApprovalCard({
     isCallback
   )
 
+  const briefing = buildHumanBriefingPanel({
+    item,
+    patient,
+    clinicName: actor.clinicId === 'clinic-1' ? 'GK Hawick' : 'Demo clinic',
+    staffName: actor.name,
+  })
+
   return (
     <PageShell hasStickyActions={hasStickyActions}>
       <Link href="/queue" style={{
@@ -210,6 +219,10 @@ export default function BookingApprovalCard({
           4. AI prepared summary (why)
           5. Actions (sticky on mobile)
       */}
+
+      <div style={{ marginBottom: 20 }}>
+        <HumanBriefingPanel briefing={briefing} />
+      </div>
 
       {item.ruleDecision && (
         <div style={{ marginBottom: 20 }}>

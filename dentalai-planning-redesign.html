@@ -1740,10 +1740,10 @@ body{
     <div class="build-progress">
       <div class="build-progress-label">
         <span>Current slice</span>
-        <span>P12 · S092</span>
+        <span>P12 · S093</span>
       </div>
-      <div class="progress-bar"><div class="progress-fill" style="width:23.05%"></div></div>
-      <div style="font-size:10px;color:var(--color-text-muted);margin-top:7px;line-height:1.45;">62 / 269 slices signed off · P12 queue card fields closed</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:23.42%"></div></div>
+      <div style="font-size:10px;color:var(--color-text-muted);margin-top:7px;line-height:1.45;">63 / 269 slices signed off · Dentally link panel next</div>
     </div>
   </div>
 </aside>
@@ -4064,24 +4064,16 @@ body{
 			      <div class="techlog-entry active">
 			        <div class="techlog-header">
 			          <div class="techlog-num active">2026-06-01 &middot; late BST</div>
-			          <div class="techlog-title">S091 Signed Off &mdash; Queue Card Fields</div>
-			          <div class="techlog-meta">P12 &middot; 62 / 269 &middot; 395 / 395 tests green &middot; verify exit 0</div>
+			          <div class="techlog-title">S092 Signed Off &mdash; Human Briefing Panel</div>
+			          <div class="techlog-meta">P12 &middot; 63 / 269 &middot; 399 / 399 tests green &middot; verify exit 0</div>
 			        </div>
 			        <div class="techlog-section">
-			          <div class="techlog-section-label">S091 &mdash; identity badge and patient detail (B-2)</div>
-			          <div class="techlog-body"><code>lib/queue/card-identity.ts</code> maps <code>IdentityScenarioState</code> to locked badges (confirmed, probable, multiple match, no match, withheld, failed, unverified). Patient name and DOB shown only when identity is confirmed or verified probable.</div>
-			        </div>
-			        <div class="techlog-section">
-			          <div class="techlog-section-label">S091 &mdash; prepared action (B-3, C-1, C-2)</div>
-			          <div class="techlog-body"><code>lib/queue/prepared-action.ts</code> validates max-three-sentence patient-centred summaries and single-line staff instructions. <code>queue-card-fields.test.ts</code> (6 tests).</div>
-			        </div>
-			        <div class="techlog-section">
-			          <div class="techlog-section-label">Formal sign-off</div>
-			          <div class="techlog-body"><code>npm run queue:card-fields-signoff</code> &rarr; <code>.data/evidence/queue-card-fields-signoff.json</code>.</div>
+			          <div class="techlog-section-label">S092 &mdash; human briefing (B-4)</div>
+			          <div class="techlog-body"><code>lib/queue/briefing.ts</code> tone warning, clinic opening script, contact history, transcript, AI timeline. <code>HumanBriefingPanel</code> on queue detail with collapsed panels. <code>queue-briefing.test.ts</code> (4 tests).</div>
 			        </div>
 			        <div class="techlog-section">
 			          <div class="techlog-section-label">Next slice</div>
-			          <div class="techlog-body"><strong>P12 &middot; S092+</strong> &mdash; human briefing panel (tone warning, opening script, collapsed panels).</div>
+			          <div class="techlog-body"><strong>P12 &middot; S094</strong> &mdash; Dentally record link and data quality panel (B-5).</div>
 			        </div>
 			      </div>
 
