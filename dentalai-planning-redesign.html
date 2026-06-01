@@ -1740,10 +1740,10 @@ body{
     <div class="build-progress">
       <div class="build-progress-label">
         <span>Current slice</span>
-        <span>P06 · S024</span>
+        <span>P07 · S029</span>
       </div>
-      <div class="progress-bar"><div class="progress-fill" style="width:8.55%"></div></div>
-      <div style="font-size:10px;color:var(--color-text-muted);margin-top:7px;line-height:1.45;">23 / 269 slices signed off · schema foundation verification next</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:10.41%"></div></div>
+      <div style="font-size:10px;color:var(--color-text-muted);margin-top:7px;line-height:1.45;">28 / 269 slices signed off · Dentally read-proof gate next</div>
     </div>
   </div>
 </aside>
@@ -2447,19 +2447,19 @@ body{
     </div>
 
     <div class="card" style="border-left:3px solid var(--color-success)">
-      <div class="card-header"><div class="card-title">Right now <span class="rule-phase rp4" style="margin-left:8px;vertical-align:middle">S023 signed off · app_settings schema</span></div></div>
+      <div class="card-header"><div class="card-title">Right now <span class="rule-phase rp4" style="margin-left:8px;vertical-align:middle">S024–S028 signed off · schema foundation band closed</span></div></div>
       <div class="card-body">
-	        <p style="color:var(--color-text);line-height:1.7;font-size:var(--text-base)"><strong>Durable settings schema is in place.</strong> Migration v6 adds clinic-scoped <code>app_settings</code> (composite primary key, indexed by clinic) with typed repository upsert/list/delete. Completes the ledger&rsquo;s &ldquo;queue, audit, users, login attempts, and settings&rdquo; schema requirement alongside S016 typed tables.</p>
-	        <p style="color:var(--color-text-muted);line-height:1.7;margin-top:10px"><strong style="color:var(--color-text)">Proof:</strong> <code>npm run verify</code> green — <strong>329</strong> tests, <strong>27</strong> files, production build exit 0.</p>
-	        <p style="color:var(--color-text-muted);font-size:var(--text-xs);margin-top:12px">Count <strong>23 / 269</strong> · P06 hardening band · next <strong>P06 · S024–S028</strong> schema foundation verification (mostly satisfied by S016; close ledger band).</p>
+	        <p style="color:var(--color-text);line-height:1.7;font-size:var(--text-base)"><strong>P06 schema foundation band is verified.</strong> Migration runner (v1–v6), durable queue/audit/users/login_attempts repositories, scrypt-hashed seed credentials, and restart-survival proofs consolidated in <code>schema-foundation.test.ts</code>. S016 delivered the implementation; S024–S028 close the ledger with explicit evidence.</p>
+	        <p style="color:var(--color-text-muted);line-height:1.7;margin-top:10px"><strong style="color:var(--color-text)">Proof:</strong> <code>npm run verify</code> green — <strong>336</strong> tests, <strong>28</strong> files, production build exit 0.</p>
+	        <p style="color:var(--color-text-muted);font-size:var(--text-xs);margin-top:12px">Count <strong>28 / 269</strong> · P07 gate · next <strong>S029</strong> Dentally token rotation (external credential — code-ready only until rotation recorded).</p>
       </div>
     </div>
 
     <div class="section">
       <div class="section-header">What happens next</div>
       <div class="rule-list">
-	        <div class="rule-row"><div class="rule-num">Now</div><div><div class="rule-name">Schema foundation verification</div><div class="rule-desc">P06 · S024–S028 — confirm migration runner, durable queue/audit/users repos, hashed credentials, and restart proof (S016 evidence + consolidated test).</div></div><div class="rule-phase rp3">Active</div></div>
-	        <div class="rule-row"><div class="rule-num">Next</div><div><div class="rule-name">Dentally read-proof re-run</div><div class="rule-desc">P07 · S029+ — token rotation evidence blocked on external credential; implement code-ready pieces.</div></div><div class="rule-phase rp2">Queued</div></div>
+	        <div class="rule-row"><div class="rule-num">Now</div><div><div class="rule-name">Dentally read-proof re-run</div><div class="rule-desc">P07 · S029+ — token rotation evidence (external credential); health page re-run and GET-only structural proof.</div></div><div class="rule-phase rp3">Active</div></div>
+	        <div class="rule-row"><div class="rule-num">Next</div><div><div class="rule-name">Identity scenario slices</div><div class="rule-desc">P09 · S041+ — caller identity states after Dentally field mapping gate.</div></div><div class="rule-phase rp2">Queued</div></div>
 	        <div class="rule-row"><div class="rule-num">Then</div><div><div class="rule-name">Queue OS features</div><div class="rule-desc">First-claim locking, escalation clocks, SMS suppression — after foundation schema band closes.</div></div><div class="rule-phase rp2">Queued</div></div>
       </div>
     </div>
@@ -2467,6 +2467,7 @@ body{
     <div class="section">
       <div class="section-header">Done so far &mdash; the journal</div>
       <div class="rule-list">
+        <div class="rule-row"><div class="rule-num">1 Jun</div><div><div class="rule-name">S024–S028 signed off &mdash; schema foundation verification</div><div class="rule-desc">Consolidated evidence: migrations v1–v6, durable queue/audit/users/login repos, scrypt hashes, restart survival. <code>schema-foundation.test.ts</code>. 336 tests green.</div></div><div class="rule-phase rp4">Done</div></div>
         <div class="rule-row"><div class="rule-num">1 Jun</div><div><div class="rule-name">S023 signed off &mdash; app_settings durable schema</div><div class="rule-desc">Migration v6 <code>app_settings</code> table; clinic-scoped repository; 329 tests green.</div></div><div class="rule-phase rp4">Done</div></div>
         <div class="rule-row"><div class="rule-num">1 Jun</div><div><div class="rule-name">S022 signed off &mdash; browser acceptance re-run</div><div class="rule-desc">Auth, clinic access, protected routes, role nav, CSP headers re-checked in real browser. Automated matrix in <code>browser-acceptance.test.ts</code>. 326 tests green.</div></div><div class="rule-phase rp4">Done</div></div>
         <div class="rule-row"><div class="rule-num">1 Jun</div><div><div class="rule-name">S019–S021 signed off &mdash; env hardening, backup evidence, role nav</div><div class="rule-desc"><code>DENTALAI_APP_ENV</code> separation, secret hygiene, CSP headers, <code>/api/health</code>, SQLite backup/restore scripts, incident evidence pack, Primary+More nav per role with route guards. 317 tests green.</div></div><div class="rule-phase rp4">Done</div></div>
@@ -2510,8 +2511,8 @@ body{
 	    <div class="section">
 	      <div class="section-header">Exact Active Slice</div>
 	      <div class="rule-list">
-		        <div class="rule-row"><div class="rule-num">Done</div><div><div class="rule-name">S001-S023 signed off</div><div class="rule-desc">Foundation through P06 hardening including browser acceptance and app_settings schema.</div></div><div class="rule-phase rp4">23 / 269</div></div>
-		        <div class="rule-row"><div class="rule-num">Now</div><div><div class="rule-name">P06 · S024–S028 — Schema foundation verification</div><div class="rule-desc">Close ledger band: migrations, durable repos, hashed credentials, restart proof.</div></div><div class="rule-phase rp3">Active</div></div>
+		        <div class="rule-row"><div class="rule-num">Done</div><div><div class="rule-name">S001-S028 signed off</div><div class="rule-desc">Foundation + P06 hardening band complete through schema foundation verification.</div></div><div class="rule-phase rp4">28 / 269</div></div>
+		        <div class="rule-row"><div class="rule-num">Now</div><div><div class="rule-name">P07 · S029 — Dentally token rotation</div><div class="rule-desc">External credential required for sign-off artifact. Code-ready health page and GET-only client already exist.</div></div><div class="rule-phase rp3">Active</div></div>
 	      </div>
 	    </div>
 
@@ -4032,7 +4033,7 @@ body{
     </div>
 
     <div class="kpi-grid">
-	      <div class="kpi-card"><div class="kpi-label">Current Slice</div><div class="kpi-value">P06 · S024</div><div class="kpi-delta warn">Schema verification · 23 / 269 slices signed off</div></div>
+	      <div class="kpi-card"><div class="kpi-label">Current Slice</div><div class="kpi-value">P07 · S029</div><div class="kpi-delta warn">Dentally gate · 28 / 269 slices signed off</div></div>
       <div class="kpi-card"><div class="kpi-label">Dentally</div><div class="kpi-value">Read</div><div class="kpi-delta pos">Read-only proof evidence exists</div></div>
       <div class="kpi-card"><div class="kpi-label">Voice / Phone</div><div class="kpi-value">Later</div><div class="kpi-delta">ElevenLabs later · CallSwitch at live pilot</div></div>
       <div class="kpi-card"><div class="kpi-label">Read Proof</div><div class="kpi-value">Evidence</div><div class="kpi-delta warn">Re-run and formal sign-off still required</div></div>
@@ -4058,6 +4059,22 @@ body{
 			      <div class="techlog-entry active">
 			        <div class="techlog-header">
 			          <div class="techlog-num active">2026-06-01 &middot; late BST</div>
+			          <div class="techlog-title">S024&ndash;S028 Signed Off &mdash; Schema Foundation Verification Band</div>
+			          <div class="techlog-meta">P06 foundation close &middot; 28 / 269 &middot; 336 / 336 tests green &middot; verify exit 0</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">Consolidated evidence</div>
+			          <div class="techlog-body"><code>__tests__/schema-foundation.test.ts</code> (7 tests): S024 migration runner through v6; S025 queue repo restart survival; S026 append-only audit + UPDATE trigger block; S027 scrypt seed hashes; S028 login-attempt persistence + transactional writes. Implementation delivered in S016; this band closes the ledger with explicit sign-off tests.</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">Next slice</div>
+			          <div class="techlog-body"><strong>P07 &middot; S029</strong> &mdash; Dentally pilot token rotation (external credential; code-ready health page exists).</div>
+			        </div>
+			      </div>
+
+			      <div class="techlog-entry">
+			        <div class="techlog-header">
+			          <div class="techlog-num">2026-06-01 &middot; late BST</div>
 			          <div class="techlog-title">S023 Signed Off &mdash; app_settings Durable Schema</div>
 			          <div class="techlog-meta">P06 hardening band &middot; 23 / 269 &middot; 329 / 329 tests green &middot; verify exit 0</div>
 			        </div>

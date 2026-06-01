@@ -2,7 +2,7 @@
 
 AI-powered reception operations for UK dental practices. AI prepares work. Humans approve diary-changing actions. Dentally confirms successful appointments.
 
-> **Current status:** foundation scaffold with enterprise typed SQLite, staff lifecycle (S016), super-admin MFA, audit hardening (S017–S018), env separation/CSP/health (S019), backup evidence (S020), and role navigation (S021). Active roadmap in `../dentalai-planning-redesign.html`. **21 / 269** slices signed off. Not pilot-ready yet — queue OS, telephony, slot holds, and Dentally writes remain ahead.
+> **Current status:** foundation scaffold with enterprise typed SQLite, staff lifecycle (S016), super-admin MFA, audit hardening (S017–S018), env separation/CSP/health (S019), backup evidence (S020), role navigation (S021), browser acceptance re-run (S022), and schema foundation band (S023–S028). Active roadmap in `../dentalai-planning-redesign.html`. **28 / 269** slices signed off. Not pilot-ready yet — Dentally read-proof re-run (S029+), queue OS, telephony, slot holds, and Dentally writes remain ahead.
 
 ## Current Truth
 
@@ -13,6 +13,8 @@ The codebase contains useful evidence, not a finished operating system:
 - **Environment hardening (S019)**: `DENTALAI_APP_ENV` separation, boot-time secret hygiene, CSP + security headers, `/api/health` monitoring probe (no secrets exposed).
 - **Backup evidence (S020)**: SQLite backup/restore scripts with manifest JSON and incident-response evidence pack.
 - **Role navigation (S021)**: Primary + More menus per four-role matrix; route guards on manager-only surfaces.
+- **Browser acceptance (S022)**: Real-browser auth, clinic access, role nav, CSP re-run; automated matrix in `browser-acceptance.test.ts`.
+- **Schema band (S023–S028)**: `app_settings` migration v6; consolidated schema-foundation verification tests.
 - Protected routes, clinic scoping, queue actions, audit events, caller-identity scenarios, and a deterministic rules prototype.
 - A server-only GET-only Dentally client with safe-path validation, typed parsers, readiness reporting, clinic-to-site mapping, audited reads, and structural token-leak tests.
 
@@ -20,7 +22,7 @@ The expanded Sessions 1-5 operating system is not implemented yet: full queue ta
 
 ## Known Re-Audit Findings
 
-- `npm run verify` passes: typecheck, lint, **317** Vitest tests across **25** files, and production build.
+- `npm run verify` passes: typecheck, lint, **336** Vitest tests across **28** files, and production build.
 - Demo seed accounts still use password **`demo`** (now stored as scrypt hashes in SQLite when persistence is on).
 - First-claim queue locking and critical manager notifications remain future queue OS work.
 - Multi-instance HA, Postgres, and formal compliance retention hooks are not yet implemented.
