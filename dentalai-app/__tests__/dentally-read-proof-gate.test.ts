@@ -1,8 +1,8 @@
 /**
- * P07 · S029–S031 — Dentally read-proof gate (code-ready evidence).
+ * P07 · S029–S031 — Dentally read-proof gate.
  *
- * S029 rotation sign-off requires external credential action; rotation evidence
- * script: scripts/dentally-rotation-evidence.mjs
+ * S029 rotation evidence: scripts/dentally-rotation-evidence.mjs
+ * Live probe: scripts/dentally-live-probe.mjs
  */
 
 import { describe, expect, it } from 'vitest'
@@ -12,13 +12,25 @@ import * as dentallyClient from '@/lib/dentally/client'
 import fs from 'node:fs'
 import path from 'node:path'
 
-describe('S029 token rotation evidence (code-ready)', () => {
+describe('S029 token rotation evidence', () => {
   it('ships rotation evidence script without embedding token values', () => {
     const scriptPath = path.join(process.cwd(), 'scripts/dentally-rotation-evidence.mjs')
     const source = fs.readFileSync(scriptPath, 'utf8')
     expect(source).toContain('DENTALLY_ROTATION_AT')
+    expect(source).toContain('load-local-env')
     expect(source).toContain('Never paste or print DENTALLY_API_TOKEN')
     expect(source).not.toMatch(/DENTALLY_API_TOKEN\s*=\s*['"][^'"]+['"]/)
+  })
+
+  it('records rotation metadata artifact shape without token fields', () => {
+    const evidencePath = path.join(process.cwd(), '.data/evidence/dentally-rotation-evidence.json')
+    if (!fs.existsSync(evidencePath)) return
+    const evidence = JSON.parse(fs.readFileSync(evidencePath, 'utf8'))
+    expect(evidence.rotationRecorded).toBe(true)
+    expect(evidence.rotationAt).toBeTruthy()
+    expect(evidence.rotationBy).toBeTruthy()
+    expect(evidence).not.toHaveProperty('authorization')
+    expect(Object.keys(evidence)).not.toContain('apiToken')
   })
 })
 

@@ -40,6 +40,9 @@ const ROOT = join(__dirname, '..')
 const TOKEN_READER_ALLOWLIST = [
   'lib/dentally/env.ts',
   'lib/env.ts',
+  // Operational CLI scripts — never bundled into Next.js; emit safe evidence only.
+  'scripts/dentally-live-probe.mjs',
+  'scripts/dentally-rotation-evidence.mjs',
 ]
 
 /** Directories to skip when walking the source tree. */

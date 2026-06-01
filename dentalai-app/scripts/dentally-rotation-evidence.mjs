@@ -15,9 +15,18 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { loadLocalEnv } from './load-local-env.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const appRoot = path.resolve(__dirname, '..')
+
+loadLocalEnv(appRoot)
+
+function getDataDir() {
+  const fromEnv = process.env.DENTALAI_DATA_DIR?.trim()
+  if (fromEnv) return path.resolve(fromEnv)
+  return path.join(appRoot, '.data')
+}
 
 function parseArgs(argv) {
   const outIdx = argv.indexOf('--out')
@@ -46,7 +55,9 @@ const evidence = {
   rotationRecorded: Boolean(rotationAt && rotationBy),
   rotationAt,
   rotationBy,
-  tokenConfigured: Boolean(process.env.DENTALLY_API_BASE_URL?.trim()),
+  tokenConfigured: Boolean(
+    process.env.DENTALLY_API_BASE_URL?.trim() && process.env.DENTALLY_API_TOKEN?.trim(),
+  ),
   notes: rotationAt && rotationBy
     ? 'Rotation metadata recorded without token value. Re-run integration health page (S030) after deploy.'
     : 'Set DENTALLY_ROTATION_AT and DENTALLY_ROTATION_BY after rotating the pilot token outside chat.',
@@ -56,14 +67,22 @@ const evidence = {
   ],
 }
 
-const json = JSON.stringify(evidence, null, 2)
-if (outFile) {
-  const target = path.resolve(outFile)
-  fs.mkdirSync(path.dirname(target), { recursive: true })
-  fs.writeFileSync(target, json, 'utf8')
-  console.log(`Wrote ${target}`)
-} else {
-  console.log(json)
-}
+const defaultOut = path.join(getDataDir(), 'evidence', 'dentally-rotation-evidence.json')
+const target = path.resolve(outFile ?? defaultOut)
+const json = `${JSON.stringify(evidence, null, 2)}\n`
+fs.mkdirSync(path.dirname(target), { recursive: true })
+fs.writeFileSync(target, json, 'utf8')
+console.log(
+  JSON.stringify(
+    {
+      ok: evidence.rotationRecorded,
+      written: target,
+      rotationRecorded: evidence.rotationRecorded,
+      tokenConfigured: evidence.tokenConfigured,
+    },
+    null,
+    2,
+  ),
+)
 
 process.exit(evidence.rotationRecorded ? 0 : 2)
