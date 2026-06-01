@@ -182,6 +182,13 @@ const MIGRATIONS: Migration[] = [
       ALTER TABLE queue_items ADD COLUMN draft_notes TEXT;
     `,
   },
+  {
+    version: 8,
+    name: 'queue_callback_attempts',
+    sql: `
+      ALTER TABLE queue_items ADD COLUMN callback_attempts TEXT;
+    `,
+  },
 ]
 
 function appliedVersions(db: DB): Set<number> {

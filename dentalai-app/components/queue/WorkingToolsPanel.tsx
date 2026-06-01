@@ -9,7 +9,7 @@ import type { SessionActor } from '@/lib/access-control'
 import {
   claimQueueItem,
   releaseQueueItem,
-  recordCallbackAttempt,
+  logCallbackAttempt,
   saveQueueWorkingNotes,
 } from '@/lib/queue/actions'
 import { evaluateCloseEligibility } from '@/lib/queue/close-rule'
@@ -44,6 +44,7 @@ export default function WorkingToolsPanel({
     }
   })
   const [notes, setNotes] = useState(item.notes ?? '')
+  const [attemptOutcome, setAttemptOutcome] = useState('')
   const [outcome, setOutcome] = useState('')
   const [actionError, setActionError] = useState<string | null>(null)
   const [savedHint, setSavedHint] = useState<string | null>(null)
@@ -84,24 +85,17 @@ export default function WorkingToolsPanel({
 
   const closeCheck = evaluateCloseEligibility(item, { outcome, notes })
 
-  function handlePatientCalledBack() {
-    if (!closeCheck.canClose) {
-      setActionError(closeCheck.errors[0] ?? 'Complete outcome and notes before closing')
+  function handleLogAttempt() {
+    if (!attemptOutcome) {
+      setActionError('Select an attempt outcome before logging')
       return
     }
-    run(() => recordCallbackAttempt(item.id, 'reached', notes || undefined))
+    run(() => logCallbackAttempt(item.id, attemptOutcome, notes || undefined))
+    setAttemptOutcome('')
   }
 
-  function handleCallbackUnable() {
-    const unableCheck = evaluateCloseEligibility(item, {
-      outcome: 'no_answer',
-      notes: notes.trim().length >= closeCheck.minNotesLength ? notes : '',
-    })
-    if (panel.requiredOutcome && !unableCheck.canClose && notes.trim().length < closeCheck.minNotesLength) {
-      setActionError(`Add notes (minimum ${closeCheck.minNotesLength} characters) before logging unable to reach`)
-      return
-    }
-    run(() => recordCallbackAttempt(item.id, 'unable_to_reach', notes || undefined))
+  function handlePatientCalledBack() {
+    run(() => logCallbackAttempt(item.id, 'patient_called_back', notes || undefined))
   }
 
   const lockExpiry = formatLockExpiry(panel.lockExpiresAt)
@@ -159,23 +153,52 @@ export default function WorkingToolsPanel({
         {(item.type === 'callback' || item.type === 'fta_followup' || item.type === 'recall') && (
           <div>
             <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>
-              Callback planning
+              Callback tracker
             </div>
             <p style={{ fontSize: 13, margin: '0 0 8px', color: 'var(--ink-2)' }}>
               Suggested time: {panel.suggestedCallbackTime}
+              {!panel.withinCallbackWindow && (
+                <span style={{ color: 'var(--warn)', marginLeft: 6 }}>(outside callback hours)</span>
+              )}
             </p>
             {panel.callbackAttempts.length > 0 && (
-              <ul style={{ margin: '0 0 8px', paddingLeft: 18, fontSize: 13, lineHeight: 1.55 }}>
-                {panel.callbackAttempts.map((attempt, i) => (
-                  <li key={i}>
-                    {attempt.outcome.replace(/_/g, ' ')}
-                    {attempt.by ? ` — ${attempt.by}` : ''}
+              <ol style={{ margin: '0 0 8px', paddingLeft: 18, fontSize: 13, lineHeight: 1.55 }}>
+                {panel.callbackAttempts.map((attempt) => (
+                  <li key={attempt.id}>
+                    {attempt.outcome.replace(/_/g, ' ')} — {attempt.byName}
+                    {attempt.at ? ` · ${new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/London' }).format(new Date(attempt.at))}` : ''}
                   </li>
                 ))}
-              </ul>
+              </ol>
             )}
             {panel.managerReviewRequired && (
               <Banner tone="warn">Three unsuccessful attempts — manager review required.</Banner>
+            )}
+            {panel.allowsUnableAfterThree && (
+              <p style={{ fontSize: 12, color: 'var(--muted)', margin: '8px 0 0' }}>
+                Unable to reach after 3 attempts closure is now available.
+              </p>
+            )}
+            <p className="field-label" style={{ marginTop: 12 }}>Log attempt outcome <span className="req">*</span></p>
+            <select
+              value={attemptOutcome}
+              onChange={e => setAttemptOutcome(e.target.value)}
+              className="cm-input"
+            >
+              <option value="">Select attempt outcome…</option>
+              {panel.attemptOutcomes.map(opt => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
+              <button type="button" onClick={handleLogAttempt} disabled={isPending || !attemptOutcome} className="btn primary">
+                Log callback attempt
+              </button>
+            </div>
+            {panel.managerReviewRequired && panel.fourthAttemptAllowed && (
+              <p style={{ fontSize: 12, color: 'var(--muted)', margin: '8px 0 0' }}>
+                A fourth manual attempt remains available if manager approves.
+              </p>
             )}
           </div>
         )}
@@ -248,14 +271,10 @@ export default function WorkingToolsPanel({
             <button
               type="button"
               onClick={handlePatientCalledBack}
-              disabled={isPending || !closeCheck.canClose}
+              disabled={isPending}
               className="btn primary"
-              title={closeCheck.canClose ? undefined : closeCheck.errors.join(' · ')}
             >
               Patient called back
-            </button>
-            <button type="button" onClick={handleCallbackUnable} disabled={isPending} className="btn">
-              Unable to reach
             </button>
           </div>
         )}

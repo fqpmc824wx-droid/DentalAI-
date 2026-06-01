@@ -20,6 +20,13 @@ import { logAuditEvent } from '@/lib/audit/store'
 import { assertActionPermitted, assertBookingMutationPermitted, PermissionDeniedError } from './permissions'
 import type { AppointmentTypeId } from '@/lib/rules/types'
 import { isTerminalQueueStatus } from './types'
+import {
+  appendCallbackAttempt,
+  evaluateAttemptEligibility,
+  resolveStatusAfterAttempt,
+  RESOLVING_CALLBACK_OUTCOMES,
+  type CallbackAttemptOutcome,
+} from './callback-tracker'
 
 export type ActionResult =
   | { ok: true }
@@ -352,13 +359,23 @@ export async function escalateQueueItem(
   return { ok: true }
 }
 
-export async function recordCallbackAttempt(
+const CallbackOutcomeSchema = z.enum([
+  'answered_resolved',
+  'answered_refer_manager',
+  'no_answer',
+  'left_voicemail',
+  'wrong_number',
+  'patient_called_back',
+])
+
+export async function logCallbackAttempt(
   itemId: string,
-  outcome: 'reached' | 'unable_to_reach',
+  rawOutcome: string,
   rawNotes?: string,
   accessReason?: string,
 ): Promise<ActionResult> {
-  const outcomeAction = outcome === 'reached' ? 'callback' : 'callback_unable'
+  const outcomeParsed = CallbackOutcomeSchema.safeParse(rawOutcome)
+  if (!outcomeParsed.success) return { ok: false, error: 'Select a valid callback attempt outcome' }
 
   const notesParsed = NotesSchema.safeParse(rawNotes)
   if (!notesParsed.success) return { ok: false, error: 'Notes too long (max 2000 characters)' }
@@ -367,28 +384,60 @@ export async function recordCallbackAttempt(
   if (!r.ok) return r
 
   const { actor, item } = r
-  const denied = checkActionPermission(actor, item, outcomeAction)
+  const eligibility = evaluateAttemptEligibility(item, { outcome: outcomeParsed.data })
+  if (!eligibility.allowed) {
+    return { ok: false, error: eligibility.errors[0] ?? 'Cannot log callback attempt' }
+  }
+
+  const outcome = outcomeParsed.data
+  const permissionAction =
+    outcome === 'answered_resolved' || outcome === 'patient_called_back'
+      ? 'callback'
+      : 'callback_unable'
+  const denied = checkActionPermission(actor, item, permissionAction)
   if (denied) return denied
 
-  const newStatus = outcome === 'reached' ? 'resolved' : 'acknowledged'
+  const attempts = appendCallbackAttempt({
+    item,
+    outcome,
+    byUserId: actor.userId,
+    byName: actor.name,
+    notes: notesParsed.data,
+  })
+  const newStatus = resolveStatusAfterAttempt(outcome)
   updateQueueItem(itemId, {
     status: newStatus,
-    notes: notesParsed.data,
-    resolvedBy: outcome === 'reached' ? actor.userId : undefined,
-    ...(outcome === 'reached' ? { resolvedAt: new Date().toISOString() } : {}),
+    callbackAttempts: attempts,
+    notes: notesParsed.data ?? item.notes,
+    resolvedBy:
+      newStatus === 'resolved' || newStatus === 'escalated' ? actor.userId : item.resolvedBy,
+    ...(newStatus === 'resolved' ? { resolvedAt: new Date().toISOString() } : {}),
   })
   logAuditEvent({
-    action: outcome === 'reached' ? 'queue.task_callback_attempted' : 'queue.task_unable_to_reach',
+    action: RESOLVING_CALLBACK_OUTCOMES.has(outcome)
+      ? 'queue.task_callback_attempted'
+      : 'queue.task_unable_to_reach',
     status: 'success',
     actor: { userId: actor.userId, name: actor.name, role: actor.role, email: actor.email },
     clinicId: item.clinicId,
     queueItemRef: itemId,
     patientRef: item.patientId,
-    summary: `${actor.name} callback attempt — ${outcome}: ${item.title}`,
-    metadata: { type: item.type, outcome },
+    summary: `${actor.name} callback attempt — ${outcome.replace(/_/g, ' ')}: ${item.title}`,
+    metadata: { type: item.type, outcome, attemptNumber: attempts.length },
   })
   revalidateAll()
   return { ok: true }
+}
+
+export async function recordCallbackAttempt(
+  itemId: string,
+  outcome: 'reached' | 'unable_to_reach',
+  rawNotes?: string,
+  accessReason?: string,
+): Promise<ActionResult> {
+  const mapped: CallbackAttemptOutcome =
+    outcome === 'reached' ? 'answered_resolved' : 'no_answer'
+  return logCallbackAttempt(itemId, mapped, rawNotes, accessReason)
 }
 
 export async function recordEmergencyOutcome(

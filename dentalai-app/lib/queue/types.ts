@@ -1,5 +1,6 @@
 import type { CallerMatchState } from '@/lib/mock/patients'
 import type { AppointmentTypeId, RuleDecision } from '@/lib/rules/types'
+import type { CallbackAttempt } from './callback-tracker'
 
 export type QueueItemType =
   | 'booking_request'
@@ -65,6 +66,8 @@ export type QueueItem = {
   lockLastActivityAt?: string        // ISO — last activity on open item
   lockSessionEndedAt?: string        // ISO — browser/nav away; release after 2 min
   draftNotes?: string                // preserved when lock auto-releases
+  /** S097 — chronological callback attempts (D-5) */
+  callbackAttempts?: CallbackAttempt[]
 
   // Source
   source: 'ai_call' | 'manual' | 'mock'

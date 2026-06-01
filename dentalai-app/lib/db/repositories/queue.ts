@@ -28,6 +28,7 @@ type QueueRow = {
   lock_last_activity_at: string | null
   lock_session_ended_at: string | null
   draft_notes: string | null
+  callback_attempts: string | null
 }
 
 function rowToItem(row: QueueRow): QueueItem {
@@ -58,6 +59,9 @@ function rowToItem(row: QueueRow): QueueItem {
     lockLastActivityAt: row.lock_last_activity_at ?? undefined,
     lockSessionEndedAt: row.lock_session_ended_at ?? undefined,
     draftNotes: row.draft_notes ?? undefined,
+    callbackAttempts: row.callback_attempts
+      ? (JSON.parse(row.callback_attempts) as QueueItem['callbackAttempts'])
+      : undefined,
   }
 }
 
@@ -89,6 +93,7 @@ function itemToParams(item: QueueItem) {
     lockLastActivityAt: item.lockLastActivityAt ?? null,
     lockSessionEndedAt: item.lockSessionEndedAt ?? null,
     draftNotes: item.draftNotes ?? null,
+    callbackAttempts: item.callbackAttempts ? JSON.stringify(item.callbackAttempts) : null,
   }
 }
 
@@ -104,12 +109,14 @@ const UPSERT = `
     id, type, priority, status, clinic_id, created_at, resolved_at, updated_at,
     caller_phone, caller_state, patient_id, title, summary, appointment_type_id,
     confidence, rule_decision, rule_reasons, assigned_to, resolved_by, notes, source,
-    lock_mode, lock_assigned_at, lock_last_activity_at, lock_session_ended_at, draft_notes
+    lock_mode, lock_assigned_at, lock_last_activity_at, lock_session_ended_at, draft_notes,
+    callback_attempts
   ) VALUES (
     @id, @type, @priority, @status, @clinicId, @createdAt, @resolvedAt, @updatedAt,
     @callerPhone, @callerState, @patientId, @title, @summary, @appointmentTypeId,
     @confidence, @ruleDecision, @ruleReasons, @assignedTo, @resolvedBy, @notes, @source,
-    @lockMode, @lockAssignedAt, @lockLastActivityAt, @lockSessionEndedAt, @draftNotes
+    @lockMode, @lockAssignedAt, @lockLastActivityAt, @lockSessionEndedAt, @draftNotes,
+    @callbackAttempts
   )
   ON CONFLICT(id) DO UPDATE SET
     type = excluded.type,
@@ -136,7 +143,8 @@ const UPSERT = `
     lock_assigned_at = excluded.lock_assigned_at,
     lock_last_activity_at = excluded.lock_last_activity_at,
     lock_session_ended_at = excluded.lock_session_ended_at,
-    draft_notes = excluded.draft_notes
+    draft_notes = excluded.draft_notes,
+    callback_attempts = excluded.callback_attempts
 `
 
 export function repoLoadAllQueueItems(): QueueItem[] {

@@ -8,14 +8,16 @@
 import type { QueueItem, QueueItemType } from './types'
 import type { SessionActor } from '@/lib/access-control'
 import { LOCK_INACTIVITY_RELEASE_MS, buildQueueLockView } from './ownership'
+import {
+  buildCallbackTrackerView,
+  isCallbackTrackableType,
+  suggestCallbackWindow,
+  type CallbackAttempt,
+} from './callback-tracker'
 
 export type HoldingSmsStatus = 'none' | 'queued' | 'sent' | 'failed' | 'suppressed'
 
-export type CallbackAttemptRecord = {
-  at: string
-  outcome: 'no_answer' | 'voicemail' | 'wrong_number' | 'reached'
-  by?: string
-}
+export type { CallbackAttempt }
 
 export type QueueLockState = 'unlocked' | 'locked_by_self' | 'locked_by_other'
 
@@ -35,9 +37,13 @@ export type WorkingToolsPanel = {
     suppressionReason?: string
   }
   suggestedCallbackTime: string
-  callbackAttempts: CallbackAttemptRecord[]
+  callbackAttempts: CallbackAttempt[]
   callbackAttemptCount: number
   managerReviewRequired: boolean
+  allowsUnableAfterThree: boolean
+  withinCallbackWindow: boolean
+  attemptOutcomes: { value: string; label: string }[]
+  fourthAttemptAllowed: boolean
   assigneeId?: string
   assigneeName?: string
   lockState: QueueLockState
@@ -67,7 +73,7 @@ const EMERGENCY_OUTCOMES: WorkingToolsOutcomeOption[] = [
 ]
 
 function itemRequiresOutcome(type: QueueItemType): boolean {
-  return type === 'callback' || type === 'emergency' || type === 'fta_followup' || type === 'recall'
+  return isCallbackTrackableType(type)
 }
 
 function mockHoldingSms(item: QueueItem): WorkingToolsPanel['holdingSms'] {
@@ -100,38 +106,12 @@ function mockHoldingSms(item: QueueItem): WorkingToolsPanel['holdingSms'] {
   }
 }
 
-function mockCallbackAttempts(item: QueueItem): CallbackAttemptRecord[] {
-  if (item.type !== 'callback' && item.type !== 'fta_followup' && item.type !== 'recall') {
-    return []
-  }
-
-  if (item.status === 'acknowledged') {
-    return [
-      {
-        at: item.updatedAt ?? item.createdAt,
-        outcome: 'no_answer',
-        by: 'Previous attempt',
-      },
-    ]
-  }
-
-  return []
-}
-
-/** Suggest the next sensible callback window in UK local phrasing. */
+/** UK-local phrasing for the next sensible callback window (D-8). */
 export function suggestCallbackTime(referenceIso: string): string {
-  const ref = new Date(referenceIso)
-  const hour = Number(
-    new Intl.DateTimeFormat('en-GB', {
-      hour: 'numeric',
-      hour12: false,
-      timeZone: 'Europe/London',
-    }).format(ref),
-  )
-
-  if (hour < 12) return 'Try again after 14:00 today when afternoon slots open.'
-  if (hour < 17) return 'Try again at 17:30 — common pickup time after work.'
-  return 'Try again tomorrow between 09:30 and 11:00.'
+  return suggestCallbackWindow({
+    itemCreatedAt: referenceIso,
+    nowMs: Date.parse(referenceIso),
+  }).suggestion
 }
 
 export function deriveQueueLockState(input: {
@@ -184,7 +164,7 @@ export function buildWorkingToolsPanel(input: {
   actor: SessionActor
   assigneeName?: string
 }): WorkingToolsPanel {
-  const callbackAttempts = mockCallbackAttempts(input.item)
+  const tracker = buildCallbackTrackerView({ item: input.item })
   const ownership = buildQueueLockView({
     item: input.item,
     actorUserId: input.actor.userId,
@@ -204,10 +184,14 @@ export function buildWorkingToolsPanel(input: {
     ownership,
     scratchpadStorageKey: `dentalai-scratchpad-${input.item.id}`,
     holdingSms: mockHoldingSms(input.item),
-    suggestedCallbackTime: suggestCallbackTime(input.item.createdAt),
-    callbackAttempts,
-    callbackAttemptCount: callbackAttempts.length,
-    managerReviewRequired: callbackAttempts.length >= 3,
+    suggestedCallbackTime: tracker.suggestedCallbackTime,
+    callbackAttempts: tracker.attempts,
+    callbackAttemptCount: tracker.attempts.length,
+    managerReviewRequired: tracker.managerReviewRequired,
+    allowsUnableAfterThree: tracker.allowsUnableAfterThree,
+    withinCallbackWindow: tracker.withinCallbackWindow,
+    attemptOutcomes: tracker.attemptOutcomes,
+    fourthAttemptAllowed: tracker.fourthAttemptAllowed,
     ...lock,
     requiredOutcome,
     outcomeOptions,

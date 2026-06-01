@@ -7,6 +7,7 @@
 
 import type { QueueItem } from './types'
 import { isTerminalQueueStatus } from './types'
+import { allowsUnableAfterThreeClosure, getCallbackAttempts } from './callback-tracker'
 
 export type CloseEligibilityInput = {
   outcome?: string
@@ -53,6 +54,14 @@ export function evaluateCloseEligibility(
 
   if (requiresOutcome && !outcome) {
     errors.push('Select an allowed outcome before closing')
+  }
+
+  if (
+    requiresOutcome &&
+    outcome === 'unable_after_three' &&
+    !allowsUnableAfterThreeClosure(getCallbackAttempts(item))
+  ) {
+    errors.push('Unable to reach after 3 attempts unlocks only after three failed callback attempts')
   }
 
   if (requiresNotes && notes.length < MIN_NOTES_LENGTH) {
