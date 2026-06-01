@@ -1740,10 +1740,10 @@ body{
     <div class="build-progress">
       <div class="build-progress-label">
         <span>Current slice</span>
-        <span>P12 · S087</span>
+        <span>P12 · S092</span>
       </div>
-      <div class="progress-bar"><div class="progress-fill" style="width:21.19%"></div></div>
-      <div style="font-size:10px;color:var(--color-text-muted);margin-top:7px;line-height:1.45;">57 / 269 slices signed off · P09–P10 identity band closed</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:23.05%"></div></div>
+      <div style="font-size:10px;color:var(--color-text-muted);margin-top:7px;line-height:1.45;">62 / 269 slices signed off · P12 queue card fields closed</div>
     </div>
   </div>
 </aside>
@@ -2430,7 +2430,7 @@ body{
 	      <div class="page-sub">What's being built right now, what's already done, and what's still missing &mdash; in plain English. The detailed engineering notes are tucked away at the bottom.</div>
 	    </div>
 	    <div class="kpi-grid">
-		      <div class="kpi-card"><div class="kpi-label">Progress</div><div class="kpi-value">57 / 269</div><div class="kpi-delta pos">P09–P10 identity band signed off · queue OS next</div></div>
+		      <div class="kpi-card"><div class="kpi-label">Progress</div><div class="kpi-value">62 / 269</div><div class="kpi-delta pos">P12 queue card fields signed off · human briefing next</div></div>
 	      <div class="kpi-card"><div class="kpi-label">The plan</div><div class="kpi-value">36 stages</div><div class="kpi-delta pos">careful gates · one pilot clinic first</div></div>
 	      <div class="kpi-card"><div class="kpi-label">Ready for patients?</div><div class="kpi-value">Not yet</div><div class="kpi-delta warn">needs memory, queue, calls, slot-holds</div></div>
 	      <div class="kpi-card"><div class="kpi-label">Rollout</div><div class="kpi-value">1 clinic</div><div class="kpi-delta">then the rest, one at a time</div></div>
@@ -2451,14 +2451,14 @@ body{
       <div class="card-body">
 	        <p style="color:var(--color-text);line-height:1.7;font-size:var(--text-base)"><strong>P09–P10 identity + caller authorisation band is signed off.</strong> <code>lib/identity/</code> ships scenario states, caller-number classification, name+DOB verification with postcode fallback, disclosure boundaries, locked Session 2 scripts, and privacy-safe audit payloads. Sign-off artifact at <code>.data/evidence/identity-band-signoff.json</code> via <code>npm run identity:band-signoff</code>.</p>
 	        <p style="color:var(--color-text-muted);line-height:1.7;margin-top:10px"><strong style="color:var(--color-text)">Proof:</strong> <code>npm run verify</code> green — <strong>379</strong> tests, <strong>31</strong> files, production build exit 0.</p>
-	        <p style="color:var(--color-text-muted);font-size:var(--text-xs);margin-top:12px">Count <strong>57 / 269</strong> · next <strong>S087+</strong> queue taxonomy (P12).</p>
+	        <p style="color:var(--color-text-muted);font-size:var(--text-xs);margin-top:12px">Count <strong>62 / 269</strong> · next <strong>S092+</strong> human briefing panel (P12).</p>
       </div>
     </div>
 
     <div class="section">
       <div class="section-header">What happens next</div>
       <div class="rule-list">
-	        <div class="rule-row"><div class="rule-num">Now</div><div><div class="rule-name">Queue OS taxonomy</div><div class="rule-desc">P12 · S087+ — locked queue item taxonomy, reference codes, flags, and priority rules.</div></div><div class="rule-phase rp3">Active</div></div>
+	        <div class="rule-row"><div class="rule-num">Now</div><div><div class="rule-name">Human briefing panel</div><div class="rule-desc">P12 · S092+ — tone warning, opening script, collapsed transcript and contact history.</div></div><div class="rule-phase rp3">Active</div></div>
 	        <div class="rule-row"><div class="rule-num">Next</div><div><div class="rule-name">Queue OS features</div><div class="rule-desc">First-claim locking, escalation clocks, SMS suppression — after taxonomy band.</div></div><div class="rule-phase rp2">Queued</div></div>
 	        <div class="rule-row"><div class="rule-num">Then</div><div><div class="rule-name">Scenario policy band</div><div class="rule-desc">P11 conversation boundaries after caller authorisation slices.</div></div><div class="rule-phase rp2">Queued</div></div>
       </div>
@@ -2515,7 +2515,9 @@ body{
 	      <div class="section-header">Exact Active Slice</div>
 	      <div class="rule-list">
 		        <div class="rule-row"><div class="rule-num">Done</div><div><div class="rule-name">S001-S057 signed off</div><div class="rule-desc">Foundation through Dentally read-proof and P09–P10 identity authorisation band.</div></div><div class="rule-phase rp4">57 / 269</div></div>
-		        <div class="rule-row"><div class="rule-num">Now</div><div><div class="rule-name">P12 · S087+ — Queue taxonomy</div><div class="rule-desc">Locked queue item taxonomy (A-1–A-8), reference routing, flags, priority.</div></div><div class="rule-phase rp3">Active</div></div>
+		        <div class="rule-row"><div class="rule-num">Done</div><div><div class="rule-name">S087-S090 signed off</div><div class="rule-desc">Locked queue taxonomy (A-1–A-8), reference codes, flags, and priority policy.</div></div><div class="rule-phase rp4">61 / 269</div></div>
+		        <div class="rule-row"><div class="rule-num">Done</div><div><div class="rule-name">S091 signed off</div><div class="rule-desc">Queue card identity badge, prepared action, summary, and instruction rules.</div></div><div class="rule-phase rp4">62 / 269</div></div>
+		        <div class="rule-row"><div class="rule-num">Now</div><div><div class="rule-name">P12 · S092+ — Human briefing</div><div class="rule-desc">Tone warning, opening script, collapsed transcript and contact history.</div></div><div class="rule-phase rp3">Active</div></div>
 	      </div>
 	    </div>
 
@@ -4036,7 +4038,7 @@ body{
     </div>
 
     <div class="kpi-grid">
-	      <div class="kpi-card"><div class="kpi-label">Current Slice</div><div class="kpi-value">P12 · S087</div><div class="kpi-delta pos">Queue taxonomy · 57 / 269 slices signed off</div></div>
+	      <div class="kpi-card"><div class="kpi-label">Current Slice</div><div class="kpi-value">P12 · S092</div><div class="kpi-delta pos">Human briefing · 62 / 269 slices signed off</div></div>
       <div class="kpi-card"><div class="kpi-label">Dentally</div><div class="kpi-value">Read</div><div class="kpi-delta pos">Read-proof band signed off S029–S040</div></div>
       <div class="kpi-card"><div class="kpi-label">Voice / Phone</div><div class="kpi-value">Later</div><div class="kpi-delta">ElevenLabs later · CallSwitch at live pilot</div></div>
       <div class="kpi-card"><div class="kpi-label">Read Proof</div><div class="kpi-value">Signed off</div><div class="kpi-delta pos">Rotation + contracts + live probe evidence</div></div>
@@ -4062,6 +4064,54 @@ body{
 			      <div class="techlog-entry active">
 			        <div class="techlog-header">
 			          <div class="techlog-num active">2026-06-01 &middot; late BST</div>
+			          <div class="techlog-title">S091 Signed Off &mdash; Queue Card Fields</div>
+			          <div class="techlog-meta">P12 &middot; 62 / 269 &middot; 395 / 395 tests green &middot; verify exit 0</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">S091 &mdash; identity badge and patient detail (B-2)</div>
+			          <div class="techlog-body"><code>lib/queue/card-identity.ts</code> maps <code>IdentityScenarioState</code> to locked badges (confirmed, probable, multiple match, no match, withheld, failed, unverified). Patient name and DOB shown only when identity is confirmed or verified probable.</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">S091 &mdash; prepared action (B-3, C-1, C-2)</div>
+			          <div class="techlog-body"><code>lib/queue/prepared-action.ts</code> validates max-three-sentence patient-centred summaries and single-line staff instructions. <code>queue-card-fields.test.ts</code> (6 tests).</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">Formal sign-off</div>
+			          <div class="techlog-body"><code>npm run queue:card-fields-signoff</code> &rarr; <code>.data/evidence/queue-card-fields-signoff.json</code>.</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">Next slice</div>
+			          <div class="techlog-body"><strong>P12 &middot; S092+</strong> &mdash; human briefing panel (tone warning, opening script, collapsed panels).</div>
+			        </div>
+			      </div>
+
+			      <div class="techlog-entry">
+			        <div class="techlog-header">
+			          <div class="techlog-num">2026-06-01 &middot; late BST</div>
+			          <div class="techlog-title">S087&ndash;S090 Signed Off &mdash; Queue Taxonomy Band</div>
+			          <div class="techlog-meta">P12 band &middot; 61 / 269 &middot; 389 / 389 tests green &middot; verify exit 0</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">S087 &mdash; locked taxonomy (A-1&ndash;A-8)</div>
+			          <div class="techlog-body"><code>lib/queue/taxonomy.ts</code> registers eight categories and 34 subtypes with legacy mock-type bridge. <code>assertFullTaxonomyCoverage()</code> guards registry completeness.</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">S088&ndash;S090 &mdash; reference, flags, priority</div>
+			          <div class="techlog-body"><code>reference.ts</code> Q-clinic-date-sequence codes. <code>flags.ts</code> red/amber/teal/blue/grey registry. <code>priority-policy.ts</code> locked critical/high/standard/low derivation. <code>queue-taxonomy.test.ts</code> (10 tests).</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">Formal sign-off</div>
+			          <div class="techlog-body"><code>npm run queue:taxonomy-band-signoff</code> &rarr; <code>.data/evidence/queue-taxonomy-band-signoff.json</code>.</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">Next slice</div>
+			          <div class="techlog-body"><strong>P12 &middot; S091+</strong> &mdash; queue card identity badge and prepared action fields.</div>
+			        </div>
+			      </div>
+
+			      <div class="techlog-entry">
+			        <div class="techlog-header">
+			          <div class="techlog-num">2026-06-01 &middot; late BST</div>
 			          <div class="techlog-title">S041&ndash;S057 Signed Off &mdash; Identity + Caller Authorisation</div>
 			          <div class="techlog-meta">P09&ndash;P10 band &middot; 57 / 269 &middot; 379 / 379 tests green &middot; verify exit 0</div>
 			        </div>

@@ -2,7 +2,7 @@
 
 AI-powered reception operations for UK dental practices. AI prepares work. Humans approve diary-changing actions. Dentally confirms successful appointments.
 
-> **Current status:** foundation scaffold with enterprise typed SQLite, staff lifecycle (S016), super-admin MFA, audit hardening (S017–S018), env separation/CSP/health (S019), backup evidence (S020), role navigation (S021), browser acceptance re-run (S022), schema foundation band (S023–S028), Dentally read-proof + data contracts (S029–S040), and caller identity + authorisation band (S041–S057). Active roadmap in `../dentalai-planning-redesign.html`. **57 / 269** slices signed off. Not pilot-ready yet — queue OS taxonomy (S087+), telephony, slot holds, and Dentally writes remain ahead.
+> **Current status:** foundation scaffold with enterprise typed SQLite, staff lifecycle (S016), super-admin MFA, audit hardening (S017–S018), env separation/CSP/health (S019), backup evidence (S020), role navigation (S021), browser acceptance re-run (S022), schema foundation band (S023–S028), Dentally read-proof + data contracts (S029–S040), caller identity + authorisation band (S041–S057), queue taxonomy band (S087–S090), and queue card fields (S091). Active roadmap in `../dentalai-planning-redesign.html`. **62 / 269** slices signed off. Not pilot-ready yet — human briefing and Dentally link panel (S092+), telephony, slot holds, and Dentally writes remain ahead.
 
 ## Current Truth
 
@@ -22,7 +22,7 @@ The expanded Sessions 1-5 operating system is not implemented yet: full queue ta
 
 ## Known Re-Audit Findings
 
-- `npm run verify` passes: typecheck, lint, **336** Vitest tests across **28** files, and production build.
+- `npm run verify` passes: typecheck, lint, **395** Vitest tests across **33** files, and production build.
 - Demo seed accounts still use password **`demo`** (now stored as scrypt hashes in SQLite when persistence is on).
 - First-claim queue locking and critical manager notifications remain future queue OS work.
 - Multi-instance HA, Postgres, and formal compliance retention hooks are not yet implemented.
