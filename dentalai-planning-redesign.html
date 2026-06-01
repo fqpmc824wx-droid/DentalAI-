@@ -1740,10 +1740,10 @@ body{
     <div class="build-progress">
       <div class="build-progress-label">
         <span>Current slice</span>
-        <span>P06 · S023</span>
+        <span>P06 · S024</span>
       </div>
-      <div class="progress-bar"><div class="progress-fill" style="width:8.18%"></div></div>
-      <div style="font-size:10px;color:var(--color-text-muted);margin-top:7px;line-height:1.45;">22 / 269 slices signed off · durable schema expansion next</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:8.55%"></div></div>
+      <div style="font-size:10px;color:var(--color-text-muted);margin-top:7px;line-height:1.45;">23 / 269 slices signed off · schema foundation verification next</div>
     </div>
   </div>
 </aside>
@@ -2447,20 +2447,19 @@ body{
     </div>
 
     <div class="card" style="border-left:3px solid var(--color-success)">
-      <div class="card-header"><div class="card-title">Right now <span class="rule-phase rp4" style="margin-left:8px;vertical-align:middle">S022 signed off · browser acceptance re-run</span></div></div>
+      <div class="card-header"><div class="card-title">Right now <span class="rule-phase rp4" style="margin-left:8px;vertical-align:middle">S023 signed off · app_settings schema</span></div></div>
       <div class="card-body">
-	        <p style="color:var(--color-text);line-height:1.7;font-size:var(--text-base)"><strong>Browser acceptance re-run is recorded.</strong> Real-browser checks on 2026-06-01 late BST: protected redirect, receptionist + manager sign-in, clinic-scoped dashboard, role Primary+More nav, manager-only route guards, Hawick queue access, cross-clinic denial, sign-out, and CSP + companion headers on HTML responses.</p>
-	        <p style="color:var(--color-text-muted);line-height:1.7;margin-top:10px"><strong style="color:var(--color-text)">Proof:</strong> <code>npm run verify</code> green — <strong>326</strong> tests, <strong>26</strong> files, production build exit 0. Automated acceptance matrix in <code>__tests__/browser-acceptance.test.ts</code> mirrors manual browser evidence.</p>
-		        <p style="color:var(--color-text-muted);line-height:1.7;margin-top:10px"><strong style="color:var(--color-text)">Enterprise readiness (honest):</strong> S001–S022 pass <em>hardening band</em> enterprise but <strong>not</strong> full Hawick launch enterprise — Postgres/HA, first-claim locking, onboarding walkthrough, Dentally read-proof re-run, and compliance retention still open.</p>
-	        <p style="color:var(--color-text-muted);font-size:var(--text-xs);margin-top:12px">Count <strong>22 / 269</strong> · P06 hardening band · next <strong>P06 · S023</strong> durable schema expansion (<code>app_settings</code> + repository hardening).</p>
+	        <p style="color:var(--color-text);line-height:1.7;font-size:var(--text-base)"><strong>Durable settings schema is in place.</strong> Migration v6 adds clinic-scoped <code>app_settings</code> (composite primary key, indexed by clinic) with typed repository upsert/list/delete. Completes the ledger&rsquo;s &ldquo;queue, audit, users, login attempts, and settings&rdquo; schema requirement alongside S016 typed tables.</p>
+	        <p style="color:var(--color-text-muted);line-height:1.7;margin-top:10px"><strong style="color:var(--color-text)">Proof:</strong> <code>npm run verify</code> green — <strong>329</strong> tests, <strong>27</strong> files, production build exit 0.</p>
+	        <p style="color:var(--color-text-muted);font-size:var(--text-xs);margin-top:12px">Count <strong>23 / 269</strong> · P06 hardening band · next <strong>P06 · S024–S028</strong> schema foundation verification (mostly satisfied by S016; close ledger band).</p>
       </div>
     </div>
 
     <div class="section">
       <div class="section-header">What happens next</div>
       <div class="rule-list">
-	        <div class="rule-row"><div class="rule-num">Now</div><div><div class="rule-name">Durable schema expansion</div><div class="rule-desc">P06 · S023+ — <code>app_settings</code> table, schema hardening, repository migration verification. First-claim queue locking and onboarding walkthrough (J-7 remainder) stay queued.</div></div><div class="rule-phase rp3">Active</div></div>
-	        <div class="rule-row"><div class="rule-num">Next</div><div><div class="rule-name">Dentally read-proof re-run</div><div class="rule-desc">P07 gate — token rotation evidence, clean browser proof, field mapping into queue and identity contracts.</div></div><div class="rule-phase rp2">Queued</div></div>
+	        <div class="rule-row"><div class="rule-num">Now</div><div><div class="rule-name">Schema foundation verification</div><div class="rule-desc">P06 · S024–S028 — confirm migration runner, durable queue/audit/users repos, hashed credentials, and restart proof (S016 evidence + consolidated test).</div></div><div class="rule-phase rp3">Active</div></div>
+	        <div class="rule-row"><div class="rule-num">Next</div><div><div class="rule-name">Dentally read-proof re-run</div><div class="rule-desc">P07 · S029+ — token rotation evidence blocked on external credential; implement code-ready pieces.</div></div><div class="rule-phase rp2">Queued</div></div>
 	        <div class="rule-row"><div class="rule-num">Then</div><div><div class="rule-name">Queue OS features</div><div class="rule-desc">First-claim locking, escalation clocks, SMS suppression — after foundation schema band closes.</div></div><div class="rule-phase rp2">Queued</div></div>
       </div>
     </div>
@@ -2468,6 +2467,7 @@ body{
     <div class="section">
       <div class="section-header">Done so far &mdash; the journal</div>
       <div class="rule-list">
+        <div class="rule-row"><div class="rule-num">1 Jun</div><div><div class="rule-name">S023 signed off &mdash; app_settings durable schema</div><div class="rule-desc">Migration v6 <code>app_settings</code> table; clinic-scoped repository; 329 tests green.</div></div><div class="rule-phase rp4">Done</div></div>
         <div class="rule-row"><div class="rule-num">1 Jun</div><div><div class="rule-name">S022 signed off &mdash; browser acceptance re-run</div><div class="rule-desc">Auth, clinic access, protected routes, role nav, CSP headers re-checked in real browser. Automated matrix in <code>browser-acceptance.test.ts</code>. 326 tests green.</div></div><div class="rule-phase rp4">Done</div></div>
         <div class="rule-row"><div class="rule-num">1 Jun</div><div><div class="rule-name">S019–S021 signed off &mdash; env hardening, backup evidence, role nav</div><div class="rule-desc"><code>DENTALAI_APP_ENV</code> separation, secret hygiene, CSP headers, <code>/api/health</code>, SQLite backup/restore scripts, incident evidence pack, Primary+More nav per role with route guards. 317 tests green.</div></div><div class="rule-phase rp4">Done</div></div>
         <div class="rule-row"><div class="rule-num">1 Jun</div><div><div class="rule-name">S017 + S018 signed off &mdash; super-admin MFA + audit hardening</div><div class="rule-desc">TOTP MFA for super-admin, cross-estate access-reason audit, canonical taxonomy guard, SQLite triggers blocking audit UPDATE/DELETE. 286 tests green.</div></div><div class="rule-phase rp4">Done</div></div>
@@ -2510,8 +2510,8 @@ body{
 	    <div class="section">
 	      <div class="section-header">Exact Active Slice</div>
 	      <div class="rule-list">
-		        <div class="rule-row"><div class="rule-num">Done</div><div><div class="rule-name">S001-S022 signed off</div><div class="rule-desc">Foundation through P06 hardening: persistence, permissions, enterprise DB, staff lifecycle, MFA, audit immutability, env separation, backup evidence, role navigation, browser acceptance re-run.</div></div><div class="rule-phase rp4">22 / 269</div></div>
-		        <div class="rule-row"><div class="rule-num">Now</div><div><div class="rule-name">P06 · S023 — Durable schema expansion</div><div class="rule-desc"><code>app_settings</code> table and repository hardening. Ledger S024–S028 largely satisfied by S016; verify and close remaining gaps.</div></div><div class="rule-phase rp3">Active</div></div>
+		        <div class="rule-row"><div class="rule-num">Done</div><div><div class="rule-name">S001-S023 signed off</div><div class="rule-desc">Foundation through P06 hardening including browser acceptance and app_settings schema.</div></div><div class="rule-phase rp4">23 / 269</div></div>
+		        <div class="rule-row"><div class="rule-num">Now</div><div><div class="rule-name">P06 · S024–S028 — Schema foundation verification</div><div class="rule-desc">Close ledger band: migrations, durable repos, hashed credentials, restart proof.</div></div><div class="rule-phase rp3">Active</div></div>
 	      </div>
 	    </div>
 
@@ -4032,7 +4032,7 @@ body{
     </div>
 
     <div class="kpi-grid">
-	      <div class="kpi-card"><div class="kpi-label">Current Slice</div><div class="kpi-value">P06 · S023</div><div class="kpi-delta warn">Schema expansion · 22 / 269 slices signed off</div></div>
+	      <div class="kpi-card"><div class="kpi-label">Current Slice</div><div class="kpi-value">P06 · S024</div><div class="kpi-delta warn">Schema verification · 23 / 269 slices signed off</div></div>
       <div class="kpi-card"><div class="kpi-label">Dentally</div><div class="kpi-value">Read</div><div class="kpi-delta pos">Read-only proof evidence exists</div></div>
       <div class="kpi-card"><div class="kpi-label">Voice / Phone</div><div class="kpi-value">Later</div><div class="kpi-delta">ElevenLabs later · CallSwitch at live pilot</div></div>
       <div class="kpi-card"><div class="kpi-label">Read Proof</div><div class="kpi-value">Evidence</div><div class="kpi-delta warn">Re-run and formal sign-off still required</div></div>
@@ -4058,6 +4058,22 @@ body{
 			      <div class="techlog-entry active">
 			        <div class="techlog-header">
 			          <div class="techlog-num active">2026-06-01 &middot; late BST</div>
+			          <div class="techlog-title">S023 Signed Off &mdash; app_settings Durable Schema</div>
+			          <div class="techlog-meta">P06 hardening band &middot; 23 / 269 &middot; 329 / 329 tests green &middot; verify exit 0</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">Migration v6</div>
+			          <div class="techlog-body"><code>app_settings</code> table with composite <code>(clinic_id, key)</code> primary key and clinic index. Repository: <code>lib/db/repositories/settings.ts</code> with upsert, list, get, delete. Three tests in <code>__tests__/app-settings.test.ts</code>. Enterprise DB test updated for v6 + table presence.</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">Next slice</div>
+			          <div class="techlog-body"><strong>P06 &middot; S024&ndash;S028</strong> &mdash; schema foundation verification band (mostly delivered in S016).</div>
+			        </div>
+			      </div>
+
+			      <div class="techlog-entry">
+			        <div class="techlog-header">
+			          <div class="techlog-num">2026-06-01 &middot; late BST</div>
 			          <div class="techlog-title">S022 Signed Off &mdash; Browser Acceptance Re-run</div>
 			          <div class="techlog-meta">P06 hardening band &middot; 22 / 269 &middot; 326 / 326 tests green &middot; verify exit 0</div>
 			        </div>

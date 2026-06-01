@@ -156,6 +156,21 @@ const MIGRATIONS: Migration[] = [
       END;
     `,
   },
+  {
+    version: 6,
+    name: 'app_settings',
+    sql: `
+      CREATE TABLE IF NOT EXISTS app_settings (
+        clinic_id    TEXT NOT NULL,
+        key          TEXT NOT NULL,
+        value        TEXT NOT NULL,
+        updated_at   TEXT NOT NULL,
+        updated_by   TEXT,
+        PRIMARY KEY (clinic_id, key)
+      );
+      CREATE INDEX IF NOT EXISTS idx_settings_clinic ON app_settings(clinic_id);
+    `,
+  },
 ]
 
 function appliedVersions(db: DB): Set<number> {
