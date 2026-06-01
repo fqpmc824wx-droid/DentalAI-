@@ -36,9 +36,38 @@ vi.mock('@/lib/access', () => {
     return actor.clinicIds.includes(clinicId)
   }
 
+  class AccessReasonRequiredError extends Error {
+    userId: string
+    clinicId: string
+    constructor(userId: string, clinicId: string) {
+      super(`Access reason required: user ${userId} must document why they accessed clinic ${clinicId}`)
+      this.name = 'AccessReasonRequiredError'
+      this.userId = userId
+      this.clinicId = clinicId
+    }
+  }
+
+  function requiresAccessReason(actor: { role: string; clinicIds: string[] }, clinicId: string): boolean {
+    return actor.role === 'super_admin' && !actor.clinicIds.includes(clinicId)
+  }
+
   function assertClinicAccess(actor: { role: string; clinicIds: string[]; userId: string }, clinicId: string): void {
     if (!canAccessClinic(actor, clinicId)) {
       throw new AccessDeniedError(actor.userId, clinicId)
+    }
+  }
+
+  function assertClinicAccessWithReason(
+    actor: { role: string; clinicIds: string[]; userId: string },
+    clinicId: string,
+    accessReason?: string,
+  ): void {
+    assertClinicAccess(actor, clinicId)
+    if (requiresAccessReason(actor, clinicId)) {
+      const reason = accessReason?.trim() ?? ''
+      if (reason.length < 5) {
+        throw new AccessReasonRequiredError(actor.userId, clinicId)
+      }
     }
   }
 
@@ -46,7 +75,9 @@ vi.mock('@/lib/access', () => {
     requireSession: vi.fn(),
     canAccessClinic,
     assertClinicAccess,
+    assertClinicAccessWithReason,
     AccessDeniedError,
+    AccessReasonRequiredError,
     accessibleClinics: (actor: { clinicIds: string[] }) => actor.clinicIds,
   }
 })
@@ -521,5 +552,40 @@ describe('already-resolved items', () => {
 
     expect(result.ok).toBe(false)
     expect(getQueueItem('test-terminal-callback')?.status).toBe('resolved')
+  })
+})
+
+// ── Super-admin cross-estate access reason ───────────────────────────────────
+
+const SUPER_ADMIN: SessionActor = {
+  userId: 'user-sa-1',
+  name: 'Super Admin',
+  email: 'admin@test.com',
+  role: 'super_admin',
+  clinicId: 'clinic-1',
+  clinicIds: ['clinic-1', 'clinic-2'],
+}
+
+describe('super_admin cross-estate access', () => {
+  it('blocks queue mutation without an access reason', async () => {
+    asSession(SUPER_ADMIN)
+    seedItem({ id: 'test-cross-estate', clinicId: 'clinic-99', status: 'pending' })
+
+    const denied = await approveQueueItem('test-cross-estate')
+    expect(denied.ok).toBe(false)
+    expect((denied as { ok: false; error: string }).error).toContain('5 characters')
+    expect(getQueueItem('test-cross-estate')?.status).toBe('pending')
+  })
+
+  it('allows queue mutation with a documented access reason', async () => {
+    asSession(SUPER_ADMIN)
+    seedItem({ id: 'test-cross-estate-2', clinicId: 'clinic-99', status: 'pending' })
+
+    const result = await approveQueueItem(
+      'test-cross-estate-2',
+      'Estate incident review for clinic rollout',
+    )
+    expect(result.ok).toBe(true)
+    expect(getQueueItem('test-cross-estate-2')?.status).toBe('approved')
   })
 })

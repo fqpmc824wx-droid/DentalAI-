@@ -5,29 +5,43 @@ import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { Banner } from '@/components/calm'
 
+const SUPER_ADMIN_EMAIL = 'admin@dentalai.co.uk'
+
 const DEMO_ACCOUNTS = [
   { email: 'reception@smile-dental.co.uk', role: 'Receptionist' },
   { email: 'manager@smile-dental.co.uk',   role: 'Practice Manager' },
   { email: 'owner@smile-dental.co.uk',     role: 'Group Owner' },
-  { email: 'admin@dentalai.co.uk',         role: 'Super Admin' },
+  { email: SUPER_ADMIN_EMAIL,              role: 'Super Admin' },
 ]
 
 export default function LoginPage() {
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [totpCode, setTotpCode] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  const needsMfa = email.toLowerCase().trim() === SUPER_ADMIN_EMAIL
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
     setError('')
 
-    const result = await signIn('credentials', { email, password, redirect: false })
+    const result = await signIn('credentials', {
+      email,
+      password,
+      totpCode: needsMfa ? totpCode : undefined,
+      redirect: false,
+    })
 
     if (result?.error) {
-      setError('Email or password not recognised.')
+      setError(
+        needsMfa && totpCode.length < 6
+          ? 'Super Admin sign-in requires your authenticator code.'
+          : 'Email, password, or authenticator code not recognised.',
+      )
       setLoading(false)
     } else {
       router.push('/dashboard')
@@ -157,6 +171,32 @@ export default function LoginPage() {
             />
           </div>
 
+          {needsMfa && (
+            <div>
+              <p className="field-label" style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: 11,
+                fontWeight: 600,
+                color: 'var(--muted)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.06em',
+                margin: '0 0 8px',
+              }}>
+                Authenticator code
+              </p>
+              <input
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                value={totpCode}
+                onChange={e => setTotpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                required
+                placeholder="6-digit code"
+                className="cm-input"
+              />
+            </div>
+          )}
+
           {error && (
             <Banner tone="warn">{error}</Banner>
           )}
@@ -183,12 +223,13 @@ export default function LoginPage() {
             fontWeight: 600,
             marginBottom: 10,
           }}>
-            Demo accounts · password is <code style={{
+            Demo accounts · password <code style={{
               fontFamily: 'var(--font-mono)',
               background: 'var(--paper)',
               padding: '1px 6px',
               borderRadius: 4,
             }}>demo</code>
+            {' '}· Super Admin also needs MFA (seed secret in dev docs)
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
             {DEMO_ACCOUNTS.map(a => (

@@ -129,6 +129,33 @@ const MIGRATIONS: Migration[] = [
       );
     `,
   },
+  {
+    version: 4,
+    name: 'super_admin_mfa',
+    sql: `
+      CREATE TABLE IF NOT EXISTS user_mfa (
+        user_id         TEXT PRIMARY KEY REFERENCES users(id),
+        secret_base32   TEXT NOT NULL,
+        enrolled_at     TEXT NOT NULL
+      );
+    `,
+  },
+  {
+    version: 5,
+    name: 'audit_immutability',
+    sql: `
+      CREATE TRIGGER IF NOT EXISTS audit_events_no_update
+      BEFORE UPDATE ON audit_events
+      BEGIN
+        SELECT RAISE(ABORT, 'audit_events is append-only');
+      END;
+      CREATE TRIGGER IF NOT EXISTS audit_events_no_delete
+      BEFORE DELETE ON audit_events
+      BEGIN
+        SELECT RAISE(ABORT, 'audit_events is append-only');
+      END;
+    `,
+  },
 ]
 
 function appliedVersions(db: DB): Set<number> {

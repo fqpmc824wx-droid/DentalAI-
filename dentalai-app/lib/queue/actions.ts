@@ -2,7 +2,12 @@
 
 import { z } from 'zod'
 import { revalidatePath } from 'next/cache'
-import { requireSession, assertClinicAccess, AccessDeniedError } from '@/lib/access'
+import {
+  requireSession,
+  assertClinicAccessWithReason,
+  AccessDeniedError,
+  AccessReasonRequiredError,
+} from '@/lib/access'
 import { getQueueItem, updateQueueItem } from './store'
 import { logAuditEvent } from '@/lib/audit/store'
 import { assertActionPermitted, assertBookingMutationPermitted, PermissionDeniedError } from './permissions'
@@ -41,7 +46,10 @@ const RejectSchema = z.object({
 type SessionActor = Awaited<ReturnType<typeof requireSession>>
 type QueueItemRecord = NonNullable<ReturnType<typeof getQueueItem>>
 
-async function getActorAndItem(itemId: string): Promise<
+async function getActorAndItem(
+  itemId: string,
+  accessReason?: string,
+): Promise<
   | { ok: true; actor: SessionActor; item: QueueItemRecord }
   | { ok: false; error: string }
 > {
@@ -55,7 +63,10 @@ async function getActorAndItem(itemId: string): Promise<
   if (!item) return { ok: false, error: 'Queue item not found' }
 
   try {
-    assertClinicAccess(actor, item.clinicId)
+    assertClinicAccessWithReason(actor, item.clinicId, accessReason, {
+      queueItemRef: itemId,
+      patientRef: item.patientId,
+    })
   } catch (err) {
     if (err instanceof AccessDeniedError) {
       logAuditEvent({
@@ -68,6 +79,21 @@ async function getActorAndItem(itemId: string): Promise<
         metadata: { attemptedClinicId: item.clinicId, actorClinicId: actor.clinicId },
       })
       return { ok: false, error: 'You do not have permission to action this item' }
+    }
+    if (err instanceof AccessReasonRequiredError) {
+      logAuditEvent({
+        action: 'access.denied',
+        status: 'failure',
+        actor: { userId: actor.userId, name: actor.name, role: actor.role, email: actor.email },
+        clinicId: item.clinicId,
+        queueItemRef: itemId,
+        summary: `Access blocked — ${actor.name} must document cross-estate access`,
+        metadata: { reason: 'access_reason_required', attemptedClinicId: item.clinicId },
+      })
+      return {
+        ok: false,
+        error: 'Document why you are accessing this clinic (minimum 5 characters)',
+      }
     }
     throw err
   }
@@ -152,8 +178,11 @@ function revalidateAll() {
 
 // ── Actions ───────────────────────────────────────────────────────────────────
 
-export async function acknowledgeQueueItem(itemId: string): Promise<ActionResult> {
-  const r = await getActorAndItem(itemId)
+export async function acknowledgeQueueItem(
+  itemId: string,
+  accessReason?: string,
+): Promise<ActionResult> {
+  const r = await getActorAndItem(itemId, accessReason)
   if (!r.ok) return r
 
   const { actor, item } = r
@@ -175,8 +204,11 @@ export async function acknowledgeQueueItem(itemId: string): Promise<ActionResult
   return { ok: true }
 }
 
-export async function approveQueueItem(itemId: string): Promise<ActionResult> {
-  const r = await getActorAndItem(itemId)
+export async function approveQueueItem(
+  itemId: string,
+  accessReason?: string,
+): Promise<ActionResult> {
+  const r = await getActorAndItem(itemId, accessReason)
   if (!r.ok) return r
 
   const { actor, item } = r
@@ -202,11 +234,15 @@ export async function approveQueueItem(itemId: string): Promise<ActionResult> {
   return { ok: true }
 }
 
-export async function rejectQueueItem(itemId: string, rawReason?: string): Promise<ActionResult> {
+export async function rejectQueueItem(
+  itemId: string,
+  rawReason?: string,
+  accessReason?: string,
+): Promise<ActionResult> {
   const reasonParsed = RejectSchema.safeParse({ reason: rawReason })
   if (!reasonParsed.success) return { ok: false, error: 'Invalid rejection reason' }
 
-  const r = await getActorAndItem(itemId)
+  const r = await getActorAndItem(itemId, accessReason)
   if (!r.ok) return r
 
   const { actor, item } = r
@@ -233,11 +269,15 @@ export async function rejectQueueItem(itemId: string, rawReason?: string): Promi
   return { ok: true }
 }
 
-export async function resolveQueueItem(itemId: string, rawNotes?: string): Promise<ActionResult> {
+export async function resolveQueueItem(
+  itemId: string,
+  rawNotes?: string,
+  accessReason?: string,
+): Promise<ActionResult> {
   const notesParsed = NotesSchema.safeParse(rawNotes)
   if (!notesParsed.success) return { ok: false, error: 'Notes too long (max 2000 characters)' }
 
-  const r = await getActorAndItem(itemId)
+  const r = await getActorAndItem(itemId, accessReason)
   if (!r.ok) return r
 
   const { actor, item } = r
@@ -275,11 +315,15 @@ export async function resolveQueueItem(itemId: string, rawNotes?: string): Promi
   return { ok: true }
 }
 
-export async function escalateQueueItem(itemId: string, rawReason: string): Promise<ActionResult> {
+export async function escalateQueueItem(
+  itemId: string,
+  rawReason: string,
+  accessReason?: string,
+): Promise<ActionResult> {
   const reasonParsed = z.string().min(1).max(2000).safeParse(rawReason)
   if (!reasonParsed.success) return { ok: false, error: 'Escalation reason is required' }
 
-  const r = await getActorAndItem(itemId)
+  const r = await getActorAndItem(itemId, accessReason)
   if (!r.ok) return r
 
   const { actor, item } = r
@@ -305,13 +349,14 @@ export async function recordCallbackAttempt(
   itemId: string,
   outcome: 'reached' | 'unable_to_reach',
   rawNotes?: string,
+  accessReason?: string,
 ): Promise<ActionResult> {
   const outcomeAction = outcome === 'reached' ? 'callback' : 'callback_unable'
 
   const notesParsed = NotesSchema.safeParse(rawNotes)
   if (!notesParsed.success) return { ok: false, error: 'Notes too long (max 2000 characters)' }
 
-  const r = await getActorAndItem(itemId)
+  const r = await getActorAndItem(itemId, accessReason)
   if (!r.ok) return r
 
   const { actor, item } = r
@@ -343,6 +388,7 @@ export async function recordEmergencyOutcome(
   itemId: string,
   rawOutcome: string,
   rawNotes: string,
+  accessReason?: string,
 ): Promise<ActionResult> {
   const parsed = EmergencyOutcomeSchema.safeParse({ outcome: rawOutcome, notes: rawNotes })
   if (!parsed.success) {
@@ -350,7 +396,7 @@ export async function recordEmergencyOutcome(
     return { ok: false, error: msg }
   }
 
-  const r = await getActorAndItem(itemId)
+  const r = await getActorAndItem(itemId, accessReason)
   if (!r.ok) return r
 
   const { actor, item } = r
@@ -381,11 +427,12 @@ export async function recordEmergencyOutcome(
 export async function modifyAndApproveQueueItem(
   itemId: string,
   rawMods: { notes?: string; appointmentTypeId?: string },
+  accessReason?: string,
 ): Promise<ActionResult> {
   const parsed = ModifySchema.safeParse(rawMods)
   if (!parsed.success) return { ok: false, error: 'Invalid modification data' }
 
-  const r = await getActorAndItem(itemId)
+  const r = await getActorAndItem(itemId, accessReason)
   if (!r.ok) return r
 
   const { actor, item } = r

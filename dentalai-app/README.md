@@ -2,7 +2,7 @@
 
 AI-powered reception operations for UK dental practices. AI prepares work. Humans approve diary-changing actions. Dentally confirms successful appointments.
 
-> **Current status:** foundation scaffold with enterprise typed SQLite storage and staff account lifecycle (S016). Active roadmap in `../dentalai-planning-redesign.html`. **16 / 269** slices signed off. Not pilot-ready yet — queue OS, telephony, slot holds, and Dentally writes remain ahead.
+> **Current status:** foundation scaffold with enterprise typed SQLite, staff lifecycle (S016), super-admin MFA, and audit hardening (S017–S018). Active roadmap in `../dentalai-planning-redesign.html`. **18 / 269** slices signed off. Not pilot-ready yet — queue OS, telephony, slot holds, and Dentally writes remain ahead.
 
 ## Current Truth
 
@@ -17,7 +17,7 @@ The expanded Sessions 1-5 operating system is not implemented yet: full queue ta
 
 ## Known Re-Audit Findings
 
-- `npm run verify` passes: typecheck, lint, **270** Vitest tests across **17** files, and production build.
+- `npm run verify` passes: typecheck, lint, **286** Vitest tests across **20** files, and production build.
 - Demo seed accounts still use password **`demo`** (now stored as scrypt hashes in SQLite when persistence is on).
 - First-claim queue locking and critical manager notifications remain future queue OS work.
 - Multi-instance HA, Postgres, backup/restore evidence, and formal compliance retention hooks are not yet implemented.
@@ -46,9 +46,11 @@ All seed accounts use password **`demo`** (hashed at rest when persistence is en
 | `reception@smile-dental.co.uk` | Receptionist | Clinic 1 |
 | `manager@smile-dental.co.uk` | Practice Manager | Clinic 1 |
 | `owner@smile-dental.co.uk` | Group Owner | Clinics 1, 2, 3 |
-| `admin@dentalai.co.uk` | Super Admin | All clinics |
+| `admin@dentalai.co.uk` | Super Admin | All clinics (requires MFA) |
 
 Managers can invite staff at `/staff`. Password reset at `/reset`.
+
+**Super Admin MFA (dev):** seed secret `JBSWY3DPEHPK3PXP` (or override with `DENTALAI_SUPERADMIN_MFA_SECRET`). Use any authenticator app; the current 6-digit TOTP code is required at login alongside password `demo`.
 
 ## Commands
 

@@ -9,6 +9,7 @@
  */
 
 import type { AuditEvent, AuditAction, AuditStatus, AuditActor } from './types'
+import { assertKnownAuditAction } from './taxonomy'
 import { persistenceEnabled } from '@/lib/db/client'
 import {
   repoCountAuditEvents,
@@ -60,6 +61,8 @@ export function logAuditEvent(params: {
   metadata?: Record<string, string | number | boolean>
   summary: string
 }): AuditEvent {
+  assertKnownAuditAction(params.action)
+
   const event: AuditEvent = {
     id: generateId(),
     timestamp: new Date().toISOString(),

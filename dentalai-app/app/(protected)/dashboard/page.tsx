@@ -106,7 +106,11 @@ function actionLabel(evt: AuditEvent): string {
     case 'queue.task_unable_to_reach':       return 'tried to reach the patient'
     case 'auth.login':                       return 'signed in'
     case 'auth.logout':                      return 'signed out'
+    case 'auth.mfa_verified':                return 'passed MFA verification'
+    case 'auth.mfa_failed':                  return 'failed MFA verification'
+    case 'auth.mfa_required':                return 'needs MFA verification'
     case 'access.denied':                    return 'attempted a blocked action'
+    case 'access.reason_logged':             return 'documented cross-estate access'
     default: return evt.action
   }
 }

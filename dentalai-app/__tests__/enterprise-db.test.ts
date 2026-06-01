@@ -53,13 +53,14 @@ describe('enterprise schema', () => {
     expect(names).toContain('user_invitations')
     expect(names).toContain('password_reset_tokens')
     expect(names).toContain('session_revocations')
+    expect(names).toContain('user_mfa')
     expect(fs.existsSync(__dbPathForTests())).toBe(true)
   })
 
   it('records applied migration versions', () => {
     const db = getDb()
     const rows = db.prepare('SELECT version FROM schema_migrations ORDER BY version').all() as { version: number }[]
-    expect(rows.length).toBeGreaterThanOrEqual(3)
+    expect(rows.length).toBeGreaterThanOrEqual(5)
   })
 })
 

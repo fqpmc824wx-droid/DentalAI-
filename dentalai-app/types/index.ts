@@ -32,6 +32,7 @@ declare module 'next-auth' {
       role: Role
       clinicId: string
       clinicIds: string[]
+      mfaVerified?: boolean
     }
   }
 
@@ -42,5 +43,13 @@ declare module 'next-auth' {
     role: Role
     clinicId: string
     clinicIds: string[]
+    mfaVerified?: boolean
+  }
+}
+
+declare module '@auth/core/jwt' {
+  interface JWT {
+    mfaVerified?: boolean
+    revoked?: boolean
   }
 }

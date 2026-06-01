@@ -17,6 +17,7 @@ import {
   type StoredUser,
   type UserStatus,
 } from '@/lib/db/repositories/users'
+import { seedSuperAdminMfaIfNeeded } from '@/lib/auth/mfa/store'
 import { hashPassword, verifyPassword } from '@/lib/users/password'
 
 export type { StoredUser, UserStatus }
@@ -51,11 +52,15 @@ function seedDiskUsers(): void {
   if (!persistenceEnabled() || !repoUsersIsEmpty()) return
   const demoHash = hashPassword('demo')
   repoUpsertUsers(MOCK_USERS.map(u => mockToStored(u, demoHash)))
+  const superAdmin = MOCK_USERS.find(u => u.role === 'super_admin')
+  if (superAdmin) seedSuperAdminMfaIfNeeded(superAdmin.id)
 }
 
 function loadMemory(): StoredUser[] {
   if (!globalStore.__users) {
     globalStore.__users = seedMemoryUsers()
+    const superAdmin = globalStore.__users.find(u => u.role === 'super_admin')
+    if (superAdmin) seedSuperAdminMfaIfNeeded(superAdmin.id)
   }
   return globalStore.__users
 }

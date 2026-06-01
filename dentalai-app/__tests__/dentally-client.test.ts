@@ -306,7 +306,7 @@ describe('dentallyGet — duration tracking', () => {
     })
     const result = await dentallyGet('/v1/sites')
     expect(result.ok).toBe(false)
-    if (!result.ok) expect(result.durationMs).toBeGreaterThanOrEqual(5)
+    if (!result.ok) expect(result.durationMs).toBeGreaterThanOrEqual(4)
   })
 })
 

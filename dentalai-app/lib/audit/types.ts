@@ -8,8 +8,12 @@ export type AuditAction =
   | 'auth.password_reset_requested'
   | 'auth.password_reset_completed'
   | 'auth.account_deactivated'
+  | 'auth.mfa_verified'
+  | 'auth.mfa_failed'
+  | 'auth.mfa_required'
   // Access control
   | 'access.denied'
+  | 'access.reason_logged'
   // Booking
   | 'booking.request_created'
   | 'booking.request_approved'
