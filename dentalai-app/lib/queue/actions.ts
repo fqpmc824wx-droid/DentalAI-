@@ -461,3 +461,95 @@ export async function modifyAndApproveQueueItem(
   revalidateAll()
   return { ok: true }
 }
+
+export async function claimQueueItem(
+  itemId: string,
+  accessReason?: string,
+): Promise<ActionResult> {
+  const r = await getActorAndItem(itemId, accessReason)
+  if (!r.ok) return r
+
+  const { actor, item } = r
+  const denied = checkActionPermission(actor, item, 'acknowledge')
+  if (denied) return denied
+
+  if (item.assignedTo && item.assignedTo !== actor.userId) {
+    return { ok: false, error: 'Another staff member is working this item' }
+  }
+
+  updateQueueItem(itemId, {
+    assignedTo: actor.userId,
+    status: item.status === 'pending' ? 'acknowledged' : item.status,
+  })
+  logAuditEvent({
+    action: 'queue.task_acknowledged',
+    status: 'success',
+    actor: { userId: actor.userId, name: actor.name, role: actor.role, email: actor.email },
+    clinicId: item.clinicId,
+    queueItemRef: itemId,
+    patientRef: item.patientId,
+    summary: `${actor.name} claimed queue item: ${item.title}`,
+    metadata: { type: item.type, lockClaim: true },
+  })
+  revalidateAll()
+  return { ok: true }
+}
+
+export async function releaseQueueItem(
+  itemId: string,
+  accessReason?: string,
+): Promise<ActionResult> {
+  const r = await getActorAndItem(itemId, accessReason)
+  if (!r.ok) return r
+
+  const { actor, item } = r
+
+  if (!item.assignedTo) return { ok: true }
+  if (item.assignedTo !== actor.userId) {
+    return { ok: false, error: 'You do not hold the lock on this item' }
+  }
+
+  updateQueueItem(itemId, { assignedTo: undefined })
+  logAuditEvent({
+    action: 'queue.task_acknowledged',
+    status: 'success',
+    actor: { userId: actor.userId, name: actor.name, role: actor.role, email: actor.email },
+    clinicId: item.clinicId,
+    queueItemRef: itemId,
+    patientRef: item.patientId,
+    summary: `${actor.name} released lock on: ${item.title}`,
+    metadata: { type: item.type, lockRelease: true },
+  })
+  revalidateAll()
+  return { ok: true }
+}
+
+export async function saveQueueWorkingNotes(
+  itemId: string,
+  rawNotes: string,
+  accessReason?: string,
+): Promise<ActionResult> {
+  const notesParsed = NotesSchema.safeParse(rawNotes)
+  if (!notesParsed.success) return { ok: false, error: 'Notes too long (max 2000 characters)' }
+
+  const r = await getActorAndItem(itemId, accessReason)
+  if (!r.ok) return r
+
+  const { actor, item } = r
+  const denied = checkActionPermission(actor, item, 'acknowledge')
+  if (denied) return denied
+
+  updateQueueItem(itemId, { notes: notesParsed.data })
+  logAuditEvent({
+    action: 'queue.task_acknowledged',
+    status: 'success',
+    actor: { userId: actor.userId, name: actor.name, role: actor.role, email: actor.email },
+    clinicId: item.clinicId,
+    queueItemRef: itemId,
+    patientRef: item.patientId,
+    summary: `${actor.name} updated working notes on: ${item.title}`,
+    metadata: { type: item.type, notesUpdated: true },
+  })
+  revalidateAll()
+  return { ok: true }
+}

@@ -1740,10 +1740,10 @@ body{
     <div class="build-progress">
       <div class="build-progress-label">
         <span>Current slice</span>
-        <span>P12 · S093</span>
+        <span>P12 · S096</span>
       </div>
-      <div class="progress-bar"><div class="progress-fill" style="width:23.42%"></div></div>
-      <div style="font-size:10px;color:var(--color-text-muted);margin-top:7px;line-height:1.45;">63 / 269 slices signed off · Dentally link panel next</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:24.16%"></div></div>
+      <div style="font-size:10px;color:var(--color-text-muted);margin-top:7px;line-height:1.45;">65 / 269 slices signed off · SMS visibility panel next</div>
     </div>
   </div>
 </aside>
@@ -2430,7 +2430,7 @@ body{
 	      <div class="page-sub">What's being built right now, what's already done, and what's still missing &mdash; in plain English. The detailed engineering notes are tucked away at the bottom.</div>
 	    </div>
 	    <div class="kpi-grid">
-		      <div class="kpi-card"><div class="kpi-label">Progress</div><div class="kpi-value">62 / 269</div><div class="kpi-delta pos">P12 queue card fields signed off · human briefing next</div></div>
+		      <div class="kpi-card"><div class="kpi-label">Progress</div><div class="kpi-value">65 / 269</div><div class="kpi-delta pos">P12 working tools signed off · SMS visibility next</div></div>
 	      <div class="kpi-card"><div class="kpi-label">The plan</div><div class="kpi-value">36 stages</div><div class="kpi-delta pos">careful gates · one pilot clinic first</div></div>
 	      <div class="kpi-card"><div class="kpi-label">Ready for patients?</div><div class="kpi-value">Not yet</div><div class="kpi-delta warn">needs memory, queue, calls, slot-holds</div></div>
 	      <div class="kpi-card"><div class="kpi-label">Rollout</div><div class="kpi-value">1 clinic</div><div class="kpi-delta">then the rest, one at a time</div></div>
@@ -2451,14 +2451,14 @@ body{
       <div class="card-body">
 	        <p style="color:var(--color-text);line-height:1.7;font-size:var(--text-base)"><strong>P09–P10 identity + caller authorisation band is signed off.</strong> <code>lib/identity/</code> ships scenario states, caller-number classification, name+DOB verification with postcode fallback, disclosure boundaries, locked Session 2 scripts, and privacy-safe audit payloads. Sign-off artifact at <code>.data/evidence/identity-band-signoff.json</code> via <code>npm run identity:band-signoff</code>.</p>
 	        <p style="color:var(--color-text-muted);line-height:1.7;margin-top:10px"><strong style="color:var(--color-text)">Proof:</strong> <code>npm run verify</code> green — <strong>379</strong> tests, <strong>31</strong> files, production build exit 0.</p>
-	        <p style="color:var(--color-text-muted);font-size:var(--text-xs);margin-top:12px">Count <strong>62 / 269</strong> · next <strong>S092+</strong> human briefing panel (P12).</p>
+	        <p style="color:var(--color-text-muted);font-size:var(--text-xs);margin-top:12px">Count <strong>65 / 269</strong> · next <strong>S096</strong> SMS visibility panel (P12).</p>
       </div>
     </div>
 
     <div class="section">
       <div class="section-header">What happens next</div>
       <div class="rule-list">
-	        <div class="rule-row"><div class="rule-num">Now</div><div><div class="rule-name">Human briefing panel</div><div class="rule-desc">P12 · S092+ — tone warning, opening script, collapsed transcript and contact history.</div></div><div class="rule-phase rp3">Active</div></div>
+	        <div class="rule-row"><div class="rule-num">Now</div><div><div class="rule-name">SMS visibility panel</div><div class="rule-desc">P12 · S096 — sent, suppressed, or failed status with exact content and delivery state.</div></div><div class="rule-phase rp3">Active</div></div>
 	        <div class="rule-row"><div class="rule-num">Next</div><div><div class="rule-name">Queue OS features</div><div class="rule-desc">First-claim locking, escalation clocks, SMS suppression — after taxonomy band.</div></div><div class="rule-phase rp2">Queued</div></div>
 	        <div class="rule-row"><div class="rule-num">Then</div><div><div class="rule-name">Scenario policy band</div><div class="rule-desc">P11 conversation boundaries after caller authorisation slices.</div></div><div class="rule-phase rp2">Queued</div></div>
       </div>
@@ -2516,8 +2516,8 @@ body{
 	      <div class="rule-list">
 		        <div class="rule-row"><div class="rule-num">Done</div><div><div class="rule-name">S001-S057 signed off</div><div class="rule-desc">Foundation through Dentally read-proof and P09–P10 identity authorisation band.</div></div><div class="rule-phase rp4">57 / 269</div></div>
 		        <div class="rule-row"><div class="rule-num">Done</div><div><div class="rule-name">S087-S090 signed off</div><div class="rule-desc">Locked queue taxonomy (A-1–A-8), reference codes, flags, and priority policy.</div></div><div class="rule-phase rp4">61 / 269</div></div>
-		        <div class="rule-row"><div class="rule-num">Done</div><div><div class="rule-name">S091 signed off</div><div class="rule-desc">Queue card identity badge, prepared action, summary, and instruction rules.</div></div><div class="rule-phase rp4">62 / 269</div></div>
-		        <div class="rule-row"><div class="rule-num">Now</div><div><div class="rule-name">P12 · S092+ — Human briefing</div><div class="rule-desc">Tone warning, opening script, collapsed transcript and contact history.</div></div><div class="rule-phase rp3">Active</div></div>
+		        <div class="rule-row"><div class="rule-num">Done</div><div><div class="rule-name">S092–S095 signed off</div><div class="rule-desc">Human briefing, Dentally link + data quality, and working tools on queue detail.</div></div><div class="rule-phase rp4">65 / 269</div></div>
+		        <div class="rule-row"><div class="rule-num">Now</div><div><div class="rule-name">P12 · S096 — SMS visibility</div><div class="rule-desc">Sent, suppressed, or failed status; exact content; delivery state.</div></div><div class="rule-phase rp3">Active</div></div>
 	      </div>
 	    </div>
 
@@ -4038,7 +4038,7 @@ body{
     </div>
 
     <div class="kpi-grid">
-	      <div class="kpi-card"><div class="kpi-label">Current Slice</div><div class="kpi-value">P12 · S092</div><div class="kpi-delta pos">Human briefing · 62 / 269 slices signed off</div></div>
+	      <div class="kpi-card"><div class="kpi-label">Current Slice</div><div class="kpi-value">P12 · S096</div><div class="kpi-delta pos">SMS visibility · 65 / 269 slices signed off</div></div>
       <div class="kpi-card"><div class="kpi-label">Dentally</div><div class="kpi-value">Read</div><div class="kpi-delta pos">Read-proof band signed off S029–S040</div></div>
       <div class="kpi-card"><div class="kpi-label">Voice / Phone</div><div class="kpi-value">Later</div><div class="kpi-delta">ElevenLabs later · CallSwitch at live pilot</div></div>
       <div class="kpi-card"><div class="kpi-label">Read Proof</div><div class="kpi-value">Signed off</div><div class="kpi-delta pos">Rotation + contracts + live probe evidence</div></div>
@@ -4064,6 +4064,26 @@ body{
 			      <div class="techlog-entry active">
 			        <div class="techlog-header">
 			          <div class="techlog-num active">2026-06-01 &middot; late BST</div>
+			          <div class="techlog-title">S094&ndash;S095 Signed Off &mdash; Dentally Link + Working Tools</div>
+			          <div class="techlog-meta">P12 &middot; 65 / 269 &middot; 411 / 411 tests green &middot; verify exit 0</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">S094 &mdash; Dentally link (B-5)</div>
+			          <div class="techlog-body"><code>lib/queue/dentally-link-panel.ts</code> + <code>lib/dentally/record-url.ts</code> direct record link, create-record action, data quality issues. <code>DentallyLinkPanel</code> on queue detail. <code>queue-dentally-link.test.ts</code> (6 tests).</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">S095 &mdash; working tools (B-6)</div>
+			          <div class="techlog-body"><code>lib/queue/working-tools.ts</code> scratchpad, holding SMS, callback suggestion, lock/assignee, outcome selector. <code>WorkingToolsPanel</code> + claim/release/notes actions. <code>queue-working-tools.test.ts</code> (6 tests).</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">Next slice</div>
+			          <div class="techlog-body"><strong>P12 &middot; S096</strong> &mdash; SMS visibility panel (D-10).</div>
+			        </div>
+			      </div>
+
+			      <div class="techlog-entry">
+			        <div class="techlog-header">
+			          <div class="techlog-num">2026-06-01 &middot; late BST</div>
 			          <div class="techlog-title">S092 Signed Off &mdash; Human Briefing Panel</div>
 			          <div class="techlog-meta">P12 &middot; 63 / 269 &middot; 399 / 399 tests green &middot; verify exit 0</div>
 			        </div>

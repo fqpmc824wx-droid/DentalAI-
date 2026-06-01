@@ -17,7 +17,11 @@ import {
 } from '@/lib/queue/actions'
 import { canRolePerformAction, isActionValidForType, isBookingApprovalBlockedByRules } from '@/lib/queue/permissions'
 import { buildHumanBriefingPanel } from '@/lib/queue/briefing'
+import { buildWorkingToolsPanel } from '@/lib/queue/working-tools'
 import HumanBriefingPanel from '@/components/queue/HumanBriefingPanel'
+import DentallyLinkPanel from '@/components/queue/DentallyLinkPanel'
+import WorkingToolsPanel from '@/components/queue/WorkingToolsPanel'
+import type { DentallyLinkPanel as DentallyLinkPanelData } from '@/lib/queue/dentally-link-panel'
 import {
   PageShell,
   PageHeader,
@@ -79,11 +83,15 @@ export default function BookingApprovalCard({
   apptType,
   patient,
   actor,
+  dentallyLinkPanel,
+  clinicName,
 }: {
   item: QueueItem
   apptType: AppointmentType | null
   patient: MockPatient | null
   actor: SessionActor
+  dentallyLinkPanel: DentallyLinkPanelData
+  clinicName?: string
 }) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
@@ -167,8 +175,14 @@ export default function BookingApprovalCard({
   const briefing = buildHumanBriefingPanel({
     item,
     patient,
-    clinicName: actor.clinicId === 'clinic-1' ? 'GK Hawick' : 'Demo clinic',
+    clinicName: clinicName ?? 'the practice',
     staffName: actor.name,
+  })
+
+  const workingTools = buildWorkingToolsPanel({
+    item,
+    actor,
+    assigneeName: item.assignedTo === actor.userId ? actor.name : undefined,
   })
 
   return (
@@ -222,6 +236,14 @@ export default function BookingApprovalCard({
 
       <div style={{ marginBottom: 20 }}>
         <HumanBriefingPanel briefing={briefing} />
+      </div>
+
+      <div style={{ marginBottom: 20 }}>
+        <DentallyLinkPanel panel={dentallyLinkPanel} />
+      </div>
+
+      <div style={{ marginBottom: 20 }}>
+        <WorkingToolsPanel panel={workingTools} item={item} actor={actor} />
       </div>
 
       {item.ruleDecision && (
