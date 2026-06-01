@@ -25,6 +25,7 @@ export const AUDIT_ACTION_TAXONOMY: readonly AuditAction[] = [
   'queue.task_escalated',
   'queue.task_callback_attempted',
   'queue.task_unable_to_reach',
+  'queue.patient_called_back_handled',
   'queue.emergency_outcome_recorded',
   'patient.identity_confirmed',
   'patient.identity_uncertain',

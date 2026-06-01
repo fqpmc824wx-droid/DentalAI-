@@ -106,6 +106,7 @@ function actionLabel(evt: AuditEvent): string {
     case 'queue.task_escalated':             return 'escalated a task'
     case 'queue.emergency_outcome_recorded': return 'recorded an emergency outcome'
     case 'queue.task_callback_attempted':    return 'made a callback'
+    case 'queue.patient_called_back_handled': return 'closed inbound return call'
     case 'queue.task_unable_to_reach':       return 'tried to reach the patient'
     case 'auth.login':                       return 'signed in'
     case 'auth.logout':                      return 'signed out'
@@ -150,7 +151,7 @@ export default async function DashboardPage() {
     new Date(e.timestamp).toDateString() === new Date().toDateString()
   ).length
   const todayHandled = recentAudit.filter(e =>
-    ['queue.task_resolved', 'queue.task_callback_attempted', 'queue.emergency_outcome_recorded',
+    ['queue.task_resolved', 'queue.task_callback_attempted', 'queue.patient_called_back_handled', 'queue.emergency_outcome_recorded',
      'booking.request_approved', 'booking.request_rejected'].includes(e.action) &&
     new Date(e.timestamp).toDateString() === new Date().toDateString()
   ).length

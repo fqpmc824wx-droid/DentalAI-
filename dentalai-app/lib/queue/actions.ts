@@ -27,6 +27,10 @@ import {
   RESOLVING_CALLBACK_OUTCOMES,
   type CallbackAttemptOutcome,
 } from './callback-tracker'
+import {
+  evaluatePatientCalledBackEligibility,
+  PATIENT_CALLED_BACK_LABEL,
+} from './return-call'
 
 export type ActionResult =
   | { ok: true }
@@ -424,6 +428,53 @@ export async function logCallbackAttempt(
     patientRef: item.patientId,
     summary: `${actor.name} callback attempt — ${outcome.replace(/_/g, ' ')}: ${item.title}`,
     metadata: { type: item.type, outcome, attemptNumber: attempts.length },
+  })
+  revalidateAll()
+  return { ok: true }
+}
+
+/** S098 — one-tap inbound return call without full outcome form (D-7). */
+export async function recordPatientCalledBack(
+  itemId: string,
+  accessReason?: string,
+): Promise<ActionResult> {
+  const r = await getActorAndItem(itemId, accessReason)
+  if (!r.ok) return r
+
+  const { actor, item } = r
+  const eligibility = evaluatePatientCalledBackEligibility(item)
+  if (!eligibility.allowed) {
+    return { ok: false, error: eligibility.errors[0] ?? 'Cannot close as patient called back' }
+  }
+
+  const denied = checkActionPermission(actor, item, 'callback')
+  if (denied) return denied
+
+  const attempts = appendCallbackAttempt({
+    item,
+    outcome: 'patient_called_back',
+    byUserId: actor.userId,
+    byName: actor.name,
+    notes: PATIENT_CALLED_BACK_LABEL,
+  })
+
+  updateQueueItem(itemId, {
+    status: 'resolved',
+    callbackAttempts: attempts,
+    notes: PATIENT_CALLED_BACK_LABEL,
+    resolvedBy: actor.userId,
+    resolvedAt: new Date().toISOString(),
+  })
+
+  logAuditEvent({
+    action: 'queue.patient_called_back_handled',
+    status: 'success',
+    actor: { userId: actor.userId, name: actor.name, role: actor.role, email: actor.email },
+    clinicId: item.clinicId,
+    queueItemRef: itemId,
+    patientRef: item.patientId,
+    summary: `${actor.name} — ${eligibility.auditSummary}`,
+    metadata: { type: item.type, oneTap: true },
   })
   revalidateAll()
   return { ok: true }

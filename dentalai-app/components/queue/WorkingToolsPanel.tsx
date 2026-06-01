@@ -10,9 +10,13 @@ import {
   claimQueueItem,
   releaseQueueItem,
   logCallbackAttempt,
+  recordPatientCalledBack,
   saveQueueWorkingNotes,
 } from '@/lib/queue/actions'
 import { evaluateCloseEligibility } from '@/lib/queue/close-rule'
+import {
+  evaluatePatientCalledBackEligibility,
+} from '@/lib/queue/return-call'
 import { SectionCard, Banner } from '@/components/calm'
 
 function formatLockExpiry(iso?: string): string | null {
@@ -95,8 +99,10 @@ export default function WorkingToolsPanel({
   }
 
   function handlePatientCalledBack() {
-    run(() => logCallbackAttempt(item.id, 'patient_called_back', notes || undefined))
+    run(() => recordPatientCalledBack(item.id))
   }
+
+  const returnCall = evaluatePatientCalledBackEligibility(item)
 
   const lockExpiry = formatLockExpiry(panel.lockExpiresAt)
   const sms = panel.holdingSms
@@ -266,16 +272,19 @@ export default function WorkingToolsPanel({
           </div>
         </div>
 
-        {panel.showPatientCalledBack && (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+        {panel.showPatientCalledBack && returnCall.allowed && (
+          <div>
             <button
               type="button"
               onClick={handlePatientCalledBack}
               disabled={isPending}
               className="btn primary"
             >
-              Patient called back
+              {returnCall.closureLabel}
             </button>
+            <p style={{ fontSize: 12, color: 'var(--muted)', margin: '8px 0 0' }}>
+              One tap — no outcome form or notes required.
+            </p>
           </div>
         )}
 

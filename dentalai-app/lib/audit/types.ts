@@ -26,6 +26,7 @@ export type AuditAction =
   | 'queue.task_escalated'
   | 'queue.task_callback_attempted'
   | 'queue.task_unable_to_reach'
+  | 'queue.patient_called_back_handled'
   | 'queue.emergency_outcome_recorded'
   // Patient identity
   | 'patient.identity_confirmed'
