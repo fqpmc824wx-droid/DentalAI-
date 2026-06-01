@@ -27,7 +27,8 @@
     "queue:sms-visibility-signoff": "node scripts/queue-sms-visibility-signoff.mjs",
     "queue:ownership-signoff": "node scripts/queue-ownership-signoff.mjs",
     "queue:callback-tracker-signoff": "node scripts/queue-callback-tracker-signoff.mjs",
-    "queue:return-call-signoff": "node scripts/queue-return-call-signoff.mjs"
+    "queue:return-call-signoff": "node scripts/queue-return-call-signoff.mjs",
+    "queue:same-patient-banner-signoff": "node scripts/queue-same-patient-banner-signoff.mjs"
   },
   "dependencies": {
     "better-sqlite3": "^12.10.0",

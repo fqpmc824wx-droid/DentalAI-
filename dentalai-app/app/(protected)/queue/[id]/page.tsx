@@ -12,6 +12,7 @@ import { resolveIntegrationBanner } from '@/lib/dentally/contracts/integration-s
 import { buildIdentitySession } from '@/lib/identity/scenarios'
 import { mapScenarioToIdentityBadge } from '@/lib/queue/card-identity'
 import { buildDentallyLinkPanel } from '@/lib/queue/dentally-link-panel'
+import { buildSamePatientBanner } from '@/lib/queue/same-patient-banner'
 import { getClinic } from '@/lib/mock/clinics'
 
 export default async function QueueItemPage({ params }: { params: Promise<{ id: string }> }) {
@@ -69,6 +70,11 @@ export default async function QueueItemPage({ params }: { params: Promise<{ id: 
         : undefined,
   })
 
+  const samePatientBanner = buildSamePatientBanner({
+    currentItem: item,
+    allItems: clinicItems,
+  })
+
   return (
     <BookingApprovalCard
       item={item}
@@ -81,6 +87,7 @@ export default async function QueueItemPage({ params }: { params: Promise<{ id: 
       lockView={lockView}
       passPanel={passPanel}
       readOnly={openResult?.readOnly ?? lockView.readOnlyForActor}
+      samePatientBanner={samePatientBanner}
     />
   )
 }

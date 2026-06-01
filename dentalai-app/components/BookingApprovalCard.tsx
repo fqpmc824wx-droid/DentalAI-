@@ -25,7 +25,9 @@ import WorkingToolsPanel from '@/components/queue/WorkingToolsPanel'
 import SmsVisibilityPanel from '@/components/queue/SmsVisibilityPanel'
 import QueueOwnershipPanel from '@/components/queue/QueueOwnershipPanel'
 import QueueLockHeartbeat from '@/components/queue/QueueLockHeartbeat'
+import SamePatientBanner from '@/components/queue/SamePatientBanner'
 import type { QueueLockView } from '@/lib/queue/ownership'
+import type { SamePatientBanner as SamePatientBannerData } from '@/lib/queue/same-patient-banner'
 import type { PassToColleaguePanel } from '@/lib/queue/colleague-presence'
 import type { DentallyLinkPanel as DentallyLinkPanelData } from '@/lib/queue/dentally-link-panel'
 import {
@@ -95,6 +97,7 @@ export default function BookingApprovalCard({
   lockView,
   passPanel,
   readOnly = false,
+  samePatientBanner,
 }: {
   item: QueueItem
   apptType: AppointmentType | null
@@ -106,6 +109,7 @@ export default function BookingApprovalCard({
   lockView?: QueueLockView
   passPanel?: PassToColleaguePanel
   readOnly?: boolean
+  samePatientBanner?: SamePatientBannerData
 }) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
@@ -239,6 +243,8 @@ export default function BookingApprovalCard({
         }
         title={item.title}
       />
+
+      {samePatientBanner && <SamePatientBanner banner={samePatientBanner} />}
 
       {isResolved && (
         <div style={{ marginBottom: 20 }}>
