@@ -3,6 +3,9 @@ import { requireSession } from '@/lib/access'
 import { getClinic } from '@/lib/mock/clinics'
 import { ROLE_LABELS } from '@/lib/constants'
 import { getQueueItemsForClinics, getQueueCountsForClinics } from '@/lib/queue/store'
+import { runQueueOwnershipSweep } from '@/lib/queue/ownership-service'
+import { buildHandoverBriefing } from '@/lib/queue/shift-summary'
+import ShiftHandoverPanel from '@/components/queue/ShiftHandoverPanel'
 import { getAuditEvents } from '@/lib/audit/store'
 import { isTerminalQueueStatus, type QueueItem, type QueueItemType } from '@/lib/queue/types'
 import type { AuditEvent } from '@/lib/audit/types'
@@ -123,7 +126,9 @@ export default async function DashboardPage() {
   const clinic = getClinic(actor.clinicId)
   const isMultiClinic = actor.clinicIds.length > 1
 
+  runQueueOwnershipSweep(actor.clinicIds)
   const allItems = getQueueItemsForClinics(actor.clinicIds)
+  const handover = buildHandoverBriefing({ items: allItems })
   const counts = getQueueCountsForClinics(actor.clinicIds)
   const recentAudit = getAuditEvents({ clinicIds: actor.clinicIds, limit: 12 })
 
@@ -154,6 +159,10 @@ export default async function DashboardPage() {
 
   return (
     <PageShell>
+      <div style={{ marginBottom: 20 }}>
+        <ShiftHandoverPanel briefing={handover} />
+      </div>
+
       <PageHeader
         meta={<>{formatDateLabel()} · {formatClock(clockNow)} · {clinicLabel}</>}
         title={
