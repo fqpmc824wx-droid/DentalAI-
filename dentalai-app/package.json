@@ -14,7 +14,8 @@
     "verify": "npm run typecheck && npm run lint && npm run test && npm run build",
     "db:backup": "node scripts/db-backup.mjs",
     "db:restore": "node scripts/db-restore.mjs",
-    "incident:evidence": "node scripts/incident-evidence.mjs"
+    "incident:evidence": "node scripts/incident-evidence.mjs",
+    "dentally:rotation-evidence": "node scripts/dentally-rotation-evidence.mjs"
   },
   "dependencies": {
     "better-sqlite3": "^12.10.0",
