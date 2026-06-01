@@ -1740,10 +1740,10 @@ body{
     <div class="build-progress">
       <div class="build-progress-label">
         <span>Current slice</span>
-        <span>P12 · S106</span>
+        <span>P12 · S109</span>
       </div>
-      <div class="progress-bar"><div class="progress-fill" style="width:27.51%"></div></div>
-      <div style="font-size:10px;color:var(--color-text-muted);margin-top:7px;line-height:1.45;">74 / 269 slices signed off · duplicate caller next</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:27.88%"></div></div>
+      <div style="font-size:10px;color:var(--color-text-muted);margin-top:7px;line-height:1.45;">75 / 269 slices signed off · contact history next</div>
     </div>
   </div>
 </aside>
@@ -4038,7 +4038,7 @@ body{
     </div>
 
     <div class="kpi-grid">
-	      <div class="kpi-card"><div class="kpi-label">Current Slice</div><div class="kpi-value">P12 · S106</div><div class="kpi-delta pos">Duplicate caller · 74 / 269 slices signed off</div></div>
+	      <div class="kpi-card"><div class="kpi-label">Current Slice</div><div class="kpi-value">P12 · S109</div><div class="kpi-delta pos">Contact history · 75 / 269 slices signed off</div></div>
       <div class="kpi-card"><div class="kpi-label">Dentally</div><div class="kpi-value">Read</div><div class="kpi-delta pos">Read-proof band signed off S029–S040</div></div>
       <div class="kpi-card"><div class="kpi-label">Voice / Phone</div><div class="kpi-value">Later</div><div class="kpi-delta">ElevenLabs later · CallSwitch at live pilot</div></div>
       <div class="kpi-card"><div class="kpi-label">Read Proof</div><div class="kpi-value">Signed off</div><div class="kpi-delta pos">Rotation + contracts + live probe evidence</div></div>
@@ -4064,6 +4064,22 @@ body{
 			      <div class="techlog-entry active">
 			        <div class="techlog-header">
 			          <div class="techlog-num active">2026-06-01 &middot; late BST</div>
+			          <div class="techlog-title">S106 Signed Off &mdash; Duplicate Caller</div>
+			          <div class="techlog-meta">P12 &middot; 75 / 269 &middot; 450 / 450 tests green &middot; verify exit 0</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">S106 &mdash; duplicate caller (E-2)</div>
+			          <div class="techlog-body"><code>lib/queue/duplicate-caller.ts</code> same-day call count, <code>duplicate_caller</code> flag + one-level priority raise; manager alert at 3+. <code>DuplicateCallerAlert</code>. <code>queue-duplicate-caller.test.ts</code> (4 tests).</div>
+			        </div>
+			        <div class="techlog-section">
+			          <div class="techlog-section-label">Next slice</div>
+			          <div class="techlog-body"><strong>P12 &middot; S109</strong> &mdash; contact history (E-3).</div>
+			        </div>
+			      </div>
+
+			      <div class="techlog-entry">
+			        <div class="techlog-header">
+			          <div class="techlog-num">2026-06-01 &middot; late BST</div>
 			          <div class="techlog-title">S105 Signed Off &mdash; Same-Patient Banner</div>
 			          <div class="techlog-meta">P12 &middot; 74 / 269 &middot; 446 / 446 tests green &middot; verify exit 0</div>
 			        </div>

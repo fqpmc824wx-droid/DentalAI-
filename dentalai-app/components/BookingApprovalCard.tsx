@@ -26,8 +26,10 @@ import SmsVisibilityPanel from '@/components/queue/SmsVisibilityPanel'
 import QueueOwnershipPanel from '@/components/queue/QueueOwnershipPanel'
 import QueueLockHeartbeat from '@/components/queue/QueueLockHeartbeat'
 import SamePatientBanner from '@/components/queue/SamePatientBanner'
+import DuplicateCallerAlert from '@/components/queue/DuplicateCallerAlert'
 import type { QueueLockView } from '@/lib/queue/ownership'
 import type { SamePatientBanner as SamePatientBannerData } from '@/lib/queue/same-patient-banner'
+import type { DuplicateCallerAlert as DuplicateCallerAlertData } from '@/lib/queue/duplicate-caller'
 import type { PassToColleaguePanel } from '@/lib/queue/colleague-presence'
 import type { DentallyLinkPanel as DentallyLinkPanelData } from '@/lib/queue/dentally-link-panel'
 import {
@@ -98,6 +100,7 @@ export default function BookingApprovalCard({
   passPanel,
   readOnly = false,
   samePatientBanner,
+  duplicateCallerAlert,
 }: {
   item: QueueItem
   apptType: AppointmentType | null
@@ -110,6 +113,7 @@ export default function BookingApprovalCard({
   passPanel?: PassToColleaguePanel
   readOnly?: boolean
   samePatientBanner?: SamePatientBannerData
+  duplicateCallerAlert?: DuplicateCallerAlertData
 }) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
@@ -245,6 +249,7 @@ export default function BookingApprovalCard({
       />
 
       {samePatientBanner && <SamePatientBanner banner={samePatientBanner} />}
+      {duplicateCallerAlert && <DuplicateCallerAlert alert={duplicateCallerAlert} />}
 
       {isResolved && (
         <div style={{ marginBottom: 20 }}>
